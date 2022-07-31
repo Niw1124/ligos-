@@ -30,8 +30,15 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" width="180" align="center">
+      <el-table-column label="操作" width="220" align="center">
         <template #default="scope">
+          <el-button
+            type="primary"
+            size="small"
+            text
+            @click="openSetRule(scope.row)"
+            >配置权限</el-button
+          >
           <el-button
             type="primary"
             size="small"
@@ -95,10 +102,27 @@
         </el-form-item>
       </el-form>
     </form-component>
+    <!-- 配置权限 -->
+    <form-component
+      ref="setRuleFormComponentRef"
+      :title="drawTitle"
+      @submit="handleSetRuleSubmit"
+    >
+      <el-tree-v2
+        :data="ruleList"
+        :props="{
+          label: 'name',
+          children: 'child',
+        }"
+        show-checkbox
+        :height="treeHeight"
+      />
+    </form-component>
   </el-card>
 </template>
 
 <script setup>
+import { ref } from "vue";
 import {
   getRoleList,
   createRole,
@@ -106,6 +130,7 @@ import {
   deleteRole,
   updateRoleStatus,
 } from "~/api/role.js";
+import { getRuleList } from "~/api/rule.js";
 import FormComponent from "~/components/formComponent.vue";
 import { useInitTable, useInitForm } from "~/tools/useCommon.js";
 import ListHeader from "~/components/ListHeader.vue";
@@ -154,6 +179,25 @@ const {
   update: updateRole,
   create: createRole,
 });
+//配置权限
+const treeHeight = ref(0);
+const roleId = ref(0);
+const setRuleFormComponentRef = ref(null);
+const ruleList = ref([]);
+const openSetRule = (row) => {
+  roleId.value = row.id;
+  treeHeight.value = window.innerHeight - 170;
+  getRuleList(1)
+    .then((res) => {
+      //将res.list 赋值给ruleList
+      ruleList.value = res.list;
+      setRuleFormComponentRef.value.open();
+    })
+    .finally(() => {});
+};
+const handleSetRuleSubmit = () => {};
+
+//
 </script>
 
 <style lang="scss" scoped></style>
