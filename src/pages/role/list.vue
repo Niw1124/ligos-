@@ -109,6 +109,7 @@
       @submit="handleSetRuleSubmit"
     >
       <el-tree-v2
+        ref="elTreeRef"
         :data="ruleList"
         :props="{
           label: 'name',
@@ -116,7 +117,18 @@
         }"
         show-checkbox
         :height="treeHeight"
-      />
+        node-key="id"
+        :defaultExpandedKeys="defaultExpandedKeys"
+      >
+        <template #default="{ node, data }">
+          <div class="flex items-center">
+            <el-tag :type="data.menu ? '' : 'info'" size="small" effect="dark">
+              {{ data.menu ? "菜单" : "权限" }}
+            </el-tag>
+            <span class="ml-2 text-sm">{{ data.name }}</span>
+          </div>
+        </template></el-tree-v2
+      >
     </form-component>
   </el-card>
 </template>
@@ -184,14 +196,26 @@ const treeHeight = ref(0);
 const roleId = ref(0);
 const setRuleFormComponentRef = ref(null);
 const ruleList = ref([]);
+const defaultExpandedKeys = ref([]);
+const elTreeRef = ref(null);
+//记录起来当前角色拥有的权限id
+const ruleIds = ref([]);
 const openSetRule = (row) => {
   roleId.value = row.id;
   treeHeight.value = window.innerHeight - 170;
   getRuleList(1)
     .then((res) => {
+      console.log(res);
       //将res.list 赋值给ruleList
+      defaultExpandedKeys.value = res.list.map((o) => o.id);
       ruleList.value = res.list;
       setRuleFormComponentRef.value.open();
+
+      //当前角色拥有的权限Id
+      ruleIds.value = row.rules.map((o) => o.id);
+      setTimeout(() => {
+        elTreeRef.value.setCheckedKeys(ruleIds.value);
+      }, 150);
     })
     .finally(() => {});
 };
