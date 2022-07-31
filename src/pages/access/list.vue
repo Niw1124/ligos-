@@ -27,6 +27,7 @@
               :modelValue="data.status"
               :active-value="1"
               :inactive-value="0"
+              @change="handleStatisChange($event, data)"
             >
             </el-switch>
             <el-button
@@ -35,11 +36,23 @@
               size="small"
               @click.stop="handleEdit(data)"
               >修改</el-button
-            ><el-button text type="primary" size="small" @click=""
+            ><el-button
+              text
+              type="primary"
+              size="small"
+              @click.stop="addChild(data.id)"
               >增加</el-button
-            ><el-button text type="primary" size="small" @click=""
-              >删除</el-button
             >
+            <el-popconfirm
+              title="你确定要删除该记录吗？"
+              confirmButtonText="确认"
+              cancelButtonText="取消"
+              @confirm="handleDelete(data.id)"
+            >
+              <template #reference>
+                <el-button type="primary" size="small" text>删除</el-button>
+              </template>
+            </el-popconfirm>
           </div>
         </div>
       </template>
@@ -122,7 +135,13 @@ import IconSelect from "~/components/iconSelect.vue";
 import ListHeader from "~/components/ListHeader.vue";
 import FormComponent from "~/components/formComponent.vue";
 import { useInitTable, useInitForm } from "~/tools/useCommon.js";
-import { getRuleList, createRule, updateRule } from "~/api/rule.js";
+import {
+  getRuleList,
+  createRule,
+  updateRule,
+  updateRuleStatus,
+  deleteRule,
+} from "~/api/rule.js";
 getRuleList()
   .then((res) => {
     console.log(res);
@@ -130,17 +149,20 @@ getRuleList()
   .finally(() => {});
 const options = ref([]);
 const defaultExpandedKeys = ref([]);
-const { tableData, loading, getData } = useInitTable({
-  searchForm: {
-    keyword: "",
-  },
-  getList: getRuleList,
-  onGetListSuccess: (res) => {
-    options.value = res.rules;
-    tableData.value = res.list;
-    defaultExpandedKeys.value = res.list.map((o) => o.id);
-  },
-});
+const { tableData, loading, getData, handleDelete, handleStatisChange } =
+  useInitTable({
+    searchForm: {
+      keyword: "",
+    },
+    delete: deleteRule,
+    updateStatus: updateRuleStatus,
+    getList: getRuleList,
+    onGetListSuccess: (res) => {
+      options.value = res.rules;
+      tableData.value = res.list;
+      defaultExpandedKeys.value = res.list.map((o) => o.id);
+    },
+  });
 
 //表单部分
 const {
@@ -171,6 +193,13 @@ const {
   update: updateRule,
   create: createRule,
 });
+
+//添加子分类
+const addChild = (id) => {
+  handleCreateForm();
+  form.rule_id = id;
+  form.status = 1;
+};
 </script>
 
 <style>
