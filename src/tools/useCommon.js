@@ -126,7 +126,7 @@ export function useInitForm(opt = {}) {
         .then((res) => {
           messageInfo(drawerTitle.value + "成功");
           //如果是修改就刷新当前页，如果是新增就刷新到第一页
-          getData(editId.value ? false : 1);
+          opt.getData(editId.value ? false : 1);
           FormComponentRef.value.close();
         })
         .finally(() => {

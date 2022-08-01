@@ -50,7 +50,7 @@ const props = defineProps({
     default: "提交",
   },
 });
-const emit = defineEmits(["submit"]);
+
 //打开抽屉组件
 const open = () => {
   showDrawer.value = true;
@@ -60,6 +60,7 @@ const close = () => {
   showDrawer.value = false;
 };
 //提交
+const emit = defineEmits(["submit"]);
 const submit = () => emit("submit");
 
 //向父组件暴露以下方法

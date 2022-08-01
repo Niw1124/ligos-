@@ -119,6 +119,8 @@
         :height="treeHeight"
         node-key="id"
         :defaultExpandedKeys="defaultExpandedKeys"
+        @check="handleTreeCheck"
+        :check-strictly="checkStrictly"
       >
         <template #default="{ node, data }">
           <div class="flex items-center">
@@ -135,12 +137,14 @@
 
 <script setup>
 import { ref } from "vue";
+import { messageInfo } from "~/tools/messagePopup.js";
 import {
   getRoleList,
   createRole,
   updateRole,
   deleteRole,
   updateRoleStatus,
+  setRoleRules,
 } from "~/api/role.js";
 import { getRuleList } from "~/api/rule.js";
 import FormComponent from "~/components/formComponent.vue";
@@ -198,11 +202,15 @@ const setRuleFormComponentRef = ref(null);
 const ruleList = ref([]);
 const defaultExpandedKeys = ref([]);
 const elTreeRef = ref(null);
+//父子节点不关联即点了父节点子节点不被选中
+const checkStrictly = ref(false);
 //记录起来当前角色拥有的权限id
 const ruleIds = ref([]);
 const openSetRule = (row) => {
   roleId.value = row.id;
   treeHeight.value = window.innerHeight - 170;
+  //在获取数据之前设置为不关联
+  checkStrictly.value = true;
   getRuleList(1)
     .then((res) => {
       console.log(res);
@@ -215,11 +223,37 @@ const openSetRule = (row) => {
       ruleIds.value = row.rules.map((o) => o.id);
       setTimeout(() => {
         elTreeRef.value.setCheckedKeys(ruleIds.value);
+        //在配置权限树形组件渲染完毕后，再设置成关联，否则就会出现选中父节点但是子节点没有选中的情况
+        checkStrictly.value = false;
       }, 150);
     })
     .finally(() => {});
 };
-const handleSetRuleSubmit = () => {};
+const handleSetRuleSubmit = () => {
+  //把按钮状态设为loading
+  setRuleFormComponentRef.value.showLoading();
+  //将当前角色id和权限id传入接口
+  setRoleRules(roleId.value, ruleIds.value)
+    .then((res) => {
+      //提示
+      messageInfo("配置成功");
+      //重置页面数据
+      getData();
+      //关闭弹框
+      setRuleFormComponentRef.value.close();
+    })
+    .finally(() => {
+      setRuleFormComponentRef.value.hideLoading();
+    });
+};
+
+//
+const handleTreeCheck = (...e) => {
+  //这里是从e的第二个元素也就是e[1]解构出的checkedKeys，halfCheckedKeys
+  const { checkedKeys, halfCheckedKeys } = e[1];
+  //ruleIds存放角色权限id
+  ruleIds = [...checkedKeys, ...halfCheckedKeys];
+};
 
 //
 </script>
