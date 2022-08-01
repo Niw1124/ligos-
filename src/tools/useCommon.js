@@ -82,6 +82,32 @@ export function useInitTable(opt = {}) {
         row.statusLoading = false;
       });
   };
+  //多选选中id
+  //使ids默认为空数组
+  const multiSelectionIds = ref([]);
+  const handleSelectionChange = (e) => {
+    multiSelectionIds.value = e.map((o) => o.id);
+  };
+  //批量删除的方法
+  //获取子组件的节点
+  const ListHeaderRef = ref(null);
+  const handleMultiDelete = () => {
+    loading.value = true;
+    opt
+      .delete(multiSelectionIds.value)
+      .then((res) => {
+        messageInfo("删除成功");
+        //清空选中
+        if (ListHeaderRef.value) {
+          //执行该节点中的清除选中方法
+          ListHeaderRef.value.clearSelection();
+        }
+        getData();
+      })
+      .finally(() => {
+        loading.value = false;
+      });
+  };
   return {
     searchForm,
     resetSearchForm,
@@ -93,6 +119,11 @@ export function useInitTable(opt = {}) {
     getData,
     handleDelete,
     handleStatisChange,
+    handleSelectionChange,
+    //表格节点的绑定
+    ListHeaderRef,
+    //批量删除
+    handleMultiDelete,
   };
 }
 
