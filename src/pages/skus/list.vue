@@ -57,6 +57,7 @@
       ref="FormComponentRef"
       :title="drawTitle"
       @submit="handleSubmit"
+      destroyOnClose
     >
       <el-form
         :model="form"
@@ -86,7 +87,7 @@
           </el-switch>
         </el-form-item>
         <el-form-item label="规格值" prop="default">
-          <el-input v-model="form.default" placeholder="规格值"></el-input>
+          <tag-input v-model="form.default"></tag-input>
         </el-form-item>
       </el-form>
     </form-component>
@@ -96,6 +97,7 @@
 <script setup>
 import { ref } from "vue";
 import { messageInfo } from "~/tools/messagePopup.js";
+import TagInput from "~/components/TagInput.vue";
 import {
   getSkusList,
   createSkus,
