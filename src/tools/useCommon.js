@@ -106,10 +106,10 @@ export function useInitForm(opt = {}) {
   const rules = opt.rules || {};
   const loading = ref(false);
   //将新增和修改区分开如果是0就是新增如果是当前id就是修改
-  const drawerTitle = computed(() => {
+  const drawerTitle = computed(() =>
     //如果editId有值就是修改如果没有就是新增
-    editId.value ? "修改" : "新增";
-  });
+    editId.value ? "修改" : "新增"
+  );
   //提交表单的方法
   const handleSubmit = () => {
     formRef.value.validate((valid) => {
