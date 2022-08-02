@@ -5,7 +5,10 @@
     <el-table :data="tableData" stripe style="width: 100%" v-loading="loading">
       <el-table-column label="优惠券名称" width="350">
         <template #default="{ row }">
-          <div class="border border-dashed py-2 px-4 rounded">
+          <div
+            class="border border-dashed py-2 px-4 rounded"
+            :class="row.statusText == '领取中' ? 'active' : 'inactive'"
+          >
             <h5 class="font-bold text-md">{{ row.name }}</h5>
             <small>{{ row.start_time }}~{{ row.end_time }}</small>
           </div>
@@ -15,8 +18,8 @@
       <el-table-column label="优惠">
         <template #default="{ row }">
           <div class="border border-dashed py-2 px-4 rounded">
-            {{ row.type ? "满减" : "折扣"
-            }}{{ row.type ? "￥" + row.value : row.value + "折" }}
+            {{ row.type == 0 ? "满减" : "折扣"
+            }}{{ row.type == 0 ? "￥" + row.value : row.value + "折" }}
           </div>
         </template>
       </el-table-column>
@@ -66,16 +69,63 @@
         label-width="80px"
         :inline="false"
       >
-        <el-form-item label="公告标题" prop="title">
-          <el-input v-model="form.title" placeholder="公告标题"></el-input>
-        </el-form-item>
-        <el-form-item label="公告内容" prop="content">
+        <el-form-item label="优惠券名称" prop="name">
           <el-input
-            v-model="form.content"
-            placeholder="公告内容"
-            type="textarea"
-            :row="5"
+            v-model="form.name"
+            placeholder="优惠券名称"
+            style="width: 50%"
           ></el-input>
+        </el-form-item>
+        <el-form-item label="类型" prop="type">
+          <div style="margin-top: 20px">
+            <el-radio-group v-model="form.type">
+              <el-radio label="0" border>满减</el-radio>
+              <el-radio label="1" border>折扣</el-radio>
+            </el-radio-group>
+          </div>
+        </el-form-item>
+        <el-form-item label="面值" prop="value">
+          <div class="mt-4">
+            <el-input
+              v-model="form.value"
+              placeholder="面值"
+              style="width: 50%"
+            >
+              <template #append>{{ form.type == 0 ? "元" : "折" }}</template>
+            </el-input>
+          </div>
+        </el-form-item>
+        <el-form-item label="发行量" prop="total">
+          <el-input-number v-model="form.total" :min="0" :max="10000">
+          </el-input-number>
+        </el-form-item>
+        <el-form-item label="最低使用价格" prop="min_price">
+          <div class="mt-4">
+            <el-input v-model="form.min_price" placeholder="最低使用价格">
+              <template #append>{{ "元" }}</template>
+            </el-input>
+          </div>
+        </el-form-item>
+        <el-form-item label="排序" prop="order">
+          <el-input-number v-model="form.order" :min="0" :max="10000">
+          </el-input-number>
+        </el-form-item>
+        <el-form-item label="活动时间" prop="content">
+          <div class="block">
+            <span class="demonstration"></span>
+            <el-date-picker
+              :editable="false"
+              v-model="timeRange"
+              value-format="YYYY-MM-DD HH:mm:ss"
+              type="datetimerange"
+              range-separator="To"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
+            />
+          </div>
+        </el-form-item>
+        <el-form-item label="描述" prop="desc">
+          <el-input v-model="form.desc" placeholder="描述"></el-input>
         </el-form-item>
       </el-form>
     </form-component>
@@ -93,6 +143,7 @@ import {
 import FormComponent from "~/components/formComponent.vue";
 import { useInitTable, useInitForm } from "~/tools/useCommon.js";
 import ListHeader from "~/components/ListHeader.vue";
+import { computed } from "@vue/runtime-core";
 const {
   resetSearchForm,
   tableData,
@@ -104,8 +155,33 @@ const {
   handleDelete,
 } = useInitTable({
   getList: getCouponList,
+  onGetListSuccess: (res) => {
+    tableData.value = res.list.map((o) => {
+      //转化优惠券状态
+      o.statusText = formatStatus(o);
+      return o;
+    });
+    total.value = res.totalCount;
+  },
   delete: deleteCoupon,
 });
+
+function formatStatus(row) {
+  let s = "领取中";
+  //传过来的数据是字符串，转为时间戳格式
+  let start_time = new Date(row.start_time).getTime();
+  let now = new Date().getTime();
+  let end_time = new Date(row.end_time).getTime();
+  if (start_time > now) {
+    s = "未开始";
+  } else if (end_time < now) {
+    s = "已结束";
+  } else if (row.status == 0) {
+    s = "已失效";
+  }
+  return s;
+}
+
 const {
   editId,
   FormComponentRef,
@@ -119,29 +195,48 @@ const {
   handleEdit,
 } = useInitForm({
   form: {
-    title: "",
-    content: "",
-  },
-  rules: {
-    title: [
-      {
-        required: true,
-        message: "公告标题不能为空",
-        trigger: "blur",
-      },
-    ],
-    content: [
-      {
-        required: true,
-        message: "公告标题不能为空",
-        trigger: "blur",
-      },
-    ],
+    name: "",
+    type: 0,
+    value: 0,
+    total: 130,
+    min_price: 0,
+    start_time: null,
+    end_time: null,
+    order: 50,
   },
   getData,
   update: updateCoupon,
   create: createCoupon,
+  beforeSubmit: (f) => {
+    if (typeof f.start_time != "number") {
+      f.start_time = new Date(f.start_time).getTime();
+    }
+    if (typeof f.end_time != "number") {
+      f.end_time = new Date(f.end_time).getTime();
+    }
+    return f;
+  },
+});
+
+//表单日期功能
+const timeRange = computed({
+  get: () => {
+    return form.start_time && form.end_time
+      ? [form.start_time, form.end_time]
+      : [];
+  },
+  set: (val) => {
+    form.start_time = val[0];
+    form.end_time = val[1];
+  },
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped>
+.active {
+  @apply border-rose-500 bg-rose-50 text-rose-400 border-solid;
+}
+.inactive {
+  @apply border-gray-500 bg-gray-50 text-gray-400;
+}
+</style>
