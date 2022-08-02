@@ -13,5 +13,5 @@ export function deleteCoupon(id) {
   return axios.post(`/admin/coupon/${id}/delete`);
 }
 export function updateCouponStatus(id, status) {
-  return axios.post(`/admin/coupon/${id}/update_status`, { status });
+  return axios.post(`/admin/coupon/${id}/update_status`, { status: 0 });
 }
