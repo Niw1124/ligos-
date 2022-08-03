@@ -82,6 +82,7 @@ export function useInitTable(opt = {}) {
         row.statusLoading = false;
       });
   };
+
   //多选选中id
   //使ids默认为空数组
   const multiSelectionIds = ref([]);
@@ -97,6 +98,24 @@ export function useInitTable(opt = {}) {
       .delete(multiSelectionIds.value)
       .then((res) => {
         messageInfo("删除成功");
+        //清空选中
+        if (ListHeaderRef.value) {
+          //执行该节点中的清除选中方法
+          ListHeaderRef.value.clearSelection();
+        }
+        getData();
+      })
+      .finally(() => {
+        loading.value = false;
+      });
+  };
+  //批量修改状态的方法
+  const handleMultiStatusChange = (status) => {
+    loading.value = true;
+    opt
+      .updateStatus(multiSelectionIds.value, status)
+      .then((res) => {
+        messageInfo("修改状态成功");
         //清空选中
         if (ListHeaderRef.value) {
           //执行该节点中的清除选中方法
@@ -124,6 +143,8 @@ export function useInitTable(opt = {}) {
     ListHeaderRef,
     //批量删除
     handleMultiDelete,
+    //批量修改状态
+    handleMultiStatusChange,
   };
 }
 

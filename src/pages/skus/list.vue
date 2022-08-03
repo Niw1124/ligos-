@@ -5,7 +5,6 @@
       @refresh="getData"
       @increment="handleCreateForm"
       @delete="handleMultiDelete"
-      ref="ListHeaderRef"
     ></list-header>
     <!-- 表格 -->
     <el-table
@@ -13,6 +12,7 @@
       stripe
       style="width: 100%"
       v-loading="loading"
+      ref="ListHeaderRef"
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" />

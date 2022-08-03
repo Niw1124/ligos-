@@ -39,16 +39,34 @@
 
       <!-- 新增和刷新 -->
       <list-header
+        layout="increment,refresh,delete"
         @refresh="getData"
         @increment="handleCreateForm"
-      ></list-header>
+        @delete="handleMultiDelete"
+      >
+        <el-button
+          size="small"
+          @click="handleMultiStatusChange(1)"
+          v-if="searchForm.tab == 'all' || searchForm.tab == 'off'"
+          >上架</el-button
+        >
+        <el-button
+          size="small"
+          @click="handleMultiStatusChange(0)"
+          v-if="searchForm.tab == 'all' || searchForm.tab == 'saling'"
+          >下架</el-button
+        >
+      </list-header>
       <!-- 表格 -->
       <el-table
         :data="tableData"
         stripe
         style="width: 100%"
         v-loading="loading"
+        ref="ListHeaderRef"
+        @selection-change="handleSelectionChange"
       >
+        <el-table-column type="selection" width="55" />
         <el-table-column label="商品" width="300" align="center">
           <template #default="{ row }">
             <div class="flex">
@@ -88,10 +106,10 @@
         <el-table-column label="商品状态" width="100" align="center">
           <template #default="{ row }">
             <el-tag
-              :type="row.status == 0 ? 'success' : 'danger'"
+              :type="row.status == 0 ? 'danger' : 'success'"
               size="small"
               text
-              >{{ row.status == 0 ? "上架" : "仓库" }}</el-tag
+              >{{ row.status == 0 ? "仓库" : "上架" }}</el-tag
             >
           </template>
         </el-table-column>
@@ -279,7 +297,13 @@ const {
   limit,
   getData,
   handleDelete,
-  handleStatisChange,
+  handleSelectionChange,
+  //表格节点的绑定
+  ListHeaderRef,
+  //批量删除
+  handleMultiDelete,
+  //批量修改状态
+  handleMultiStatusChange,
 } = useInitTable({
   searchForm: {
     title: "",

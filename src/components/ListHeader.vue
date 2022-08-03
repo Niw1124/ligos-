@@ -20,6 +20,7 @@
           <el-button type="danger" size="small">批量删除</el-button>
         </template>
       </el-popconfirm>
+      <slot></slot>
     </div>
     <el-tooltip
       v-if="btns.includes('refresh')"
