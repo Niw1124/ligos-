@@ -1,25 +1,15 @@
 <template>
   <el-card shadow="never" class="border-0">
     <!-- 搜索 -->
-    <el-form :model="searchForm" label-width="80px" class="mb-3">
-      <el-row :gutter="20">
-        <el-col :span="8" :offset="0">
-          <el-form-item label="关键词">
-            <el-input
-              v-model="searchForm.keyword"
-              placeholder="管理员昵称"
-              clearable
-            ></el-input> </el-form-item
-        ></el-col>
-        <el-col :span="8" :offset="8">
-          <div class="flex items-center justify-end">
-            <el-button type="primary" @click="getData">搜索</el-button>
-            <el-button @click="resetSearchForm">重置</el-button>
-          </div></el-col
-        >
-      </el-row>
-    </el-form>
-
+    <search :model="searchForm" @search="getData" @reset="resetSearchForm">
+      <search-item label="关键词">
+        <el-input
+          v-model="searchForm.keyword"
+          placeholder="管理员昵称"
+          clearable
+        ></el-input>
+      </search-item>
+    </search>
     <!-- 新增和刷新 -->
     <list-header @refresh="getData" @increment="handleCreateForm"></list-header>
     <!-- 表格 -->
@@ -150,6 +140,8 @@ import {
 import { ref } from "vue";
 import FormComponent from "~/components/formComponent.vue";
 import ListHeader from "~/components/ListHeader.vue";
+import Search from "~/components/search.vue";
+import SearchItem from "~/components/SearchItem.vue";
 import ChooseImage from "~/components/chooseImage.vue";
 import { useInitTable, useInitForm } from "~/tools/useCommon.js";
 const {

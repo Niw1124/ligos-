@@ -10,44 +10,32 @@
     </el-tabs>
     <el-card shadow="never" class="border-0">
       <!-- 搜索 -->
-      <el-form :model="searchForm" label-width="80px" class="mb-3">
-        <el-row :gutter="20">
-          <el-col :span="8" :offset="0">
-            <el-form-item label="关键词">
-              <el-input
-                v-model="searchForm.title"
-                placeholder="商品名称"
-                clearable
-              ></el-input> </el-form-item
-          ></el-col>
-          <el-col :span="8" :offset="0">
-            <el-form-item label="商品分类" prop="category_id" v-if="showSearch">
-              <el-select
-                v-model="searchForm.category_id"
-                placeholder="请选择商品分类"
-                clearable
+      <search :model="searchForm" @search="getData" @reset="resetSearchForm">
+        <search-item label="关键词">
+          <el-input
+            v-model="searchForm.title"
+            placeholder="商品名称"
+            clearable
+          ></el-input>
+        </search-item>
+
+        <template #show>
+          <search-item label="商品分类">
+            <el-select
+              v-model="searchForm.category_id"
+              placeholder="请选择商品分类"
+              clearable
+            >
+              <el-option
+                v-for="item in category_list"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
               >
-                <el-option
-                  v-for="item in category_list"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                >
-                </el-option> </el-select></el-form-item
-          ></el-col>
-          <el-col :span="8" :offset="0">
-            <div class="flex items-center justify-end">
-              <el-button type="primary" @click="getData">搜索</el-button>
-              <el-button @click="resetSearchForm">重置</el-button>
-              <el-button type="primary" text @click="changeShowSearch"
-                >{{ showSearch ? "收起" : "展开" }}
-                <el-icon
-                  ><ArrowUpBold v-if="showSearch" /><ArrowDownBold v-else
-                /></el-icon>
-              </el-button></div
-          ></el-col>
-        </el-row>
-      </el-form>
+              </el-option> </el-select
+          ></search-item>
+        </template>
+      </search>
 
       <!-- 新增和刷新 -->
       <list-header
@@ -234,6 +222,8 @@ import { ref } from "vue";
 import FormComponent from "~/components/formComponent.vue";
 import ListHeader from "~/components/ListHeader.vue";
 import ChooseImage from "~/components/chooseImage.vue";
+import Search from "~/components/search.vue";
+import SearchItem from "~/components/SearchItem.vue";
 import { useInitTable, useInitForm } from "~/tools/useCommon.js";
 const {
   searchForm,
@@ -324,11 +314,6 @@ getCategoryList()
     category_list.value = res;
   })
   .finally(() => {});
-//展开收起的辅助判断
-const showSearch = ref(false);
-const changeShowSearch = () => {
-  showSearch.value = !showSearch.value;
-};
 </script>
 
 <style></style>

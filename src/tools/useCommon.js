@@ -17,7 +17,7 @@ export function useInitTable(opt = {}) {
     searchForm = reactive({ ...opt.searchForm });
     resetSearchForm = () => {
       for (const key in opt.searchForm) {
-        resetSearchForm[key] = opt.searchForm[key];
+        searchForm[key] = opt.searchForm[key];
       }
       getData();
     };
