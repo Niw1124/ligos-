@@ -48,6 +48,7 @@
           openChoose="true"
           ref="ImageMainRef"
           @choose="handleChoose"
+          :limit="limit"
         ></image-main>
       </el-container>
     </el-container>
@@ -64,6 +65,7 @@
 import { ref } from "vue";
 import ImageAside from "~/components/layout/ImageAside.vue";
 import ImageMain from "~/components/layout/ImageMain.vue";
+import { messageInfo } from "../tools/messagePopup";
 const dialogVisible = ref(false);
 //点击头像后打开关闭图库的方法
 const open = () => {
@@ -87,7 +89,10 @@ const handleUploadFile = () => {
   ImageMainRef.value.openUploadFile();
 };
 
-const props = defineProps({ modelValue: [String, Array] });
+const props = defineProps({
+  modelValue: [String, Array],
+  limit: { type: Number, default: 1 },
+});
 const emit = defineEmits(["update:modelValue"]);
 let urls = [];
 const handleChoose = (e) => {
@@ -95,8 +100,19 @@ const handleChoose = (e) => {
 };
 //点击确认后出发submit事件
 const submit = () => {
-  if (urls.length) {
-    emit("update:modelValue", urls[0]);
+  let value = [];
+  if (props.limit == 1) {
+    value = urls[0];
+  } else {
+    value = [...props.modelValue, ...urls];
+    if (value.length > props.limit) {
+      return messageInfo(
+        `最多还能选择${props.limit - props.modelValue.length}张`
+      );
+    }
+  }
+  if (value) {
+    emit("update:modelValue", value);
   }
   close();
 };

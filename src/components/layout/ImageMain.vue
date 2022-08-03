@@ -138,9 +138,9 @@ const emit = defineEmits(["choose"]);
 const checkedImage = computed(() => list.value.filter((o) => o.checked));
 
 const handleChooseChange = (item) => {
-  if (item.checked && checkedImage.value.length > 1) {
+  if (item.checked && checkedImage.value.length > props.limit) {
     item.checked = false;
-    return messageInfo("最多只能选中一张", "warning");
+    return messageInfo(`最多只能选中${props.limit}张`, "warning");
   }
   emit("choose", checkedImage.value);
 };
@@ -177,10 +177,14 @@ const handleDelete = (id) => {
     });
 };
 //
-defineProps({
+const props = defineProps({
   openChoose: {
     type: Boolean,
     default: false,
+  },
+  limit: {
+    type: Number,
+    default: 1,
   },
 });
 </script>

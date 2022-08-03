@@ -7,7 +7,7 @@
   >
     <el-form :model="form" ref="formRef" label-width="80px">
       <el-form-item label="轮播图">
-        <choose-image v-model="form.banners"></choose-image>
+        <choose-image v-model="form.banners" :limit="9"></choose-image>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submit">提交</el-button>
