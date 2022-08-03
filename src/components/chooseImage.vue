@@ -1,10 +1,30 @@
 <template>
   <template v-if="modelValue">
     <el-image
+      v-if="typeof modelValue == 'string'"
       :src="modelValue"
       fit="cover"
       class="w-[100px] h-[100px] rounded border mr-3"
     ></el-image>
+    <div v-else class="flex flex-wrap">
+      <div
+        class="relative mx-1 mb-2 w-[100px] h-[100px]"
+        v-for="(url, index) in modelValue"
+        :key="index"
+      >
+        <el-icon
+          class="absolute top-[5px] right-[5px] cursor-pointer bg-white rounded-full"
+          style="z-index: 10"
+          @click="removeImage(url)"
+          ><CircleClose
+        /></el-icon>
+        <el-image
+          :src="url"
+          fit="cover"
+          class="w-[100px] h-[100px] rounded border mr-3"
+        ></el-image>
+      </div>
+    </div>
   </template>
   <div class="choose_image_btn" @click="open">
     <el-icon :size="25" class="text-gray-500"><Plus /></el-icon>
@@ -79,6 +99,12 @@ const submit = () => {
     emit("update:modelValue", urls[0]);
   }
   close();
+};
+
+const removeImage = (url) => {
+  //把不等于url的值返回，剩下的移除
+  const reurl = props.modelValue.filter((u) => u != url);
+  emit("update:modelValue", reurl);
 };
 </script>
 

@@ -33,7 +33,7 @@ const open = (row) => {
   goodsId.value = row.id;
   readGoods(goodsId.value)
     .then((res) => {
-      form.banners.value = res.goodsBanner.map((o) => o.url);
+      form.banners = res.goodsBanner.map((o) => o.url);
       dialogVisible.value = true;
     })
     .finally(() => {});
