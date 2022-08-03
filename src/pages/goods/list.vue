@@ -150,7 +150,12 @@
               <el-button class="px-1" type="primary" size="small" text
                 >商品规格</el-button
               >
-              <el-button class="px-1" type="primary" size="small" text
+              <el-button
+                class="px-1"
+                type="primary"
+                size="small"
+                text
+                @click="handleGoodsBanners(scope.row)"
                 >设置轮播图</el-button
               >
               <el-button class="px-1" type="primary" size="small" text
@@ -266,8 +271,8 @@
             </el-radio-group>
           </el-form-item>
         </el-form>
-      </form-component>
-    </el-card>
+      </form-component> </el-card
+    ><banners ref="bannersRef"></banners>
   </div>
 </template>
 
@@ -286,6 +291,7 @@ import ListHeader from "~/components/ListHeader.vue";
 import ChooseImage from "~/components/chooseImage.vue";
 import Search from "~/components/search.vue";
 import SearchItem from "~/components/SearchItem.vue";
+import Banners from "~/pages/goods/banners.vue";
 import { useInitTable, useInitForm } from "~/tools/useCommon.js";
 const {
   searchForm,
@@ -386,6 +392,12 @@ getCategoryList()
     category_list.value = res;
   })
   .finally(() => {});
+
+//轮播图组件
+const bannersRef = ref(null);
+const handleGoodsBanners = (row) => {
+  bannersRef.value.open(row);
+};
 </script>
 
 <style></style>
