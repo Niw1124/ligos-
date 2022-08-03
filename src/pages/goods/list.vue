@@ -152,10 +152,13 @@
               >
               <el-button
                 class="px-1"
-                type="primary"
                 size="small"
+                :type="
+                  scope.row.goods_banner.length == 0 ? 'danger' : 'primary'
+                "
                 text
                 @click="handleGoodsBanners(scope.row)"
+                :loading="scope.row.bannersLoading"
                 >设置轮播图</el-button
               >
               <el-button class="px-1" type="primary" size="small" text
@@ -272,7 +275,7 @@
           </el-form-item>
         </el-form>
       </form-component> </el-card
-    ><banners ref="bannersRef"></banners>
+    ><banners ref="bannersRef" @reloadData="getData"></banners>
   </div>
 </template>
 
@@ -321,7 +324,7 @@ const {
   getList: getGoodsList,
   onGetListSuccess: (res) => {
     tableData.value = res.list.map((o) => {
-      o.statusLoading = false;
+      o.bannersLoading = false;
       return o;
     });
     total.value = res.totalCount;
