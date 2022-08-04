@@ -10,9 +10,7 @@
         <choose-image v-model="form.banners" :limit="9"></choose-image>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submit" :loading="loading"
-          >提交</el-button
-        >
+        <el-button type="primary" @click="submit">提交</el-button>
       </el-form-item>
     </el-form>
   </el-drawer>
@@ -22,7 +20,6 @@
 import { ref, reactive } from "vue";
 import ChooseImage from "~/components/chooseImage.vue";
 import { readGoods, setGoodsBanner } from "~/api/goods";
-import { messageInfo } from "../../../ligos-/src/tools/messagePopup";
 //设置弹框显示隐藏
 const dialogVisible = ref(false);
 
@@ -34,29 +31,15 @@ const form = reactive({
 const goodsId = ref(0);
 const open = (row) => {
   goodsId.value = row.id;
-  row.bannersLoading = true;
   readGoods(goodsId.value)
     .then((res) => {
       form.banners = res.goodsBanner.map((o) => o.url);
       dialogVisible.value = true;
     })
-    .finally(() => {
-      row.bannersLoading = false;
-    });
+    .finally(() => {});
 };
-const loading = ref(false);
 //提交数据的方法
-const submit = () => {
-  loading.value = true;
-  setGoodsBanner(goodsId.value, form)
-    .then((res) => {
-      messageInfo("设置轮播图成功");
-      dialogVisible.value = false;
-    })
-    .finally(() => {
-      loading.value = false;
-    });
-};
+const submit = () => {};
 
 defineExpose({
   open,

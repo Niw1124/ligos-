@@ -252,7 +252,7 @@ const handleTreeCheck = (...e) => {
   //这里是从e的第二个元素也就是e[1]解构出的checkedKeys，halfCheckedKeys
   const { checkedKeys, halfCheckedKeys } = e[1];
   //ruleIds存放角色权限id
-  ruleIds = [...checkedKeys, ...halfCheckedKeys];
+  ruleIds.value = [...checkedKeys, ...halfCheckedKeys];
 };
 
 //

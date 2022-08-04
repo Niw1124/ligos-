@@ -152,10 +152,13 @@
               >
               <el-button
                 class="px-1"
-                type="primary"
+                :type="
+                  scope.row.goods_banner.length == 0 ? 'danger' : 'primary'
+                "
                 size="small"
                 text
                 @click="handleGoodsBanners(scope.row)"
+                :loading="scope.row.bannersLoading"
                 >设置轮播图</el-button
               >
               <el-button class="px-1" type="primary" size="small" text
@@ -292,6 +295,7 @@ import ChooseImage from "~/components/chooseImage.vue";
 import Search from "~/components/search.vue";
 import SearchItem from "~/components/SearchItem.vue";
 import Banners from "~/pages/goods/banners.vue";
+import Contnet from "~/pages/goods/content.vue";
 import { useInitTable, useInitForm } from "~/tools/useCommon.js";
 const {
   searchForm,
@@ -321,7 +325,7 @@ const {
   getList: getGoodsList,
   onGetListSuccess: (res) => {
     tableData.value = res.list.map((o) => {
-      o.statusLoading = false;
+      o.bannersLoading = false;
       return o;
     });
     total.value = res.totalCount;
