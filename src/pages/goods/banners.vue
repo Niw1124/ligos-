@@ -44,6 +44,7 @@ const open = (row) => {
       row.bannersLoading = false;
     });
 };
+const emit = defineEmits(["reloadData"]);
 const loading = ref(false);
 //提交数据的方法
 const submit = () => {
@@ -52,6 +53,7 @@ const submit = () => {
     .then((res) => {
       messageInfo("设置轮播图成功");
       dialogVisible.value = false;
+      emit("reloadData");
     })
     .finally(() => {
       loading.value = false;

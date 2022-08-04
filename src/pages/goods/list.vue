@@ -275,7 +275,7 @@
           </el-form-item>
         </el-form>
       </form-component> </el-card
-    ><banners ref="bannersRef"></banners>
+    ><banners ref="bannersRef" @reloadData="getData"></banners>
   </div>
 </template>
 
