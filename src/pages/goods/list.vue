@@ -161,7 +161,13 @@
                 :loading="scope.row.bannersLoading"
                 >设置轮播图</el-button
               >
-              <el-button class="px-1" type="primary" size="small" text
+              <el-button
+                class="px-1"
+                :type="!scope.row.content ? 'danger' : 'primary'"
+                size="small"
+                text
+                @click="handleGoodsContent(scope.row)"
+                :loading="scope.row.contentLoading"
                 >商品详情</el-button
               >
               <el-popconfirm
@@ -276,6 +282,7 @@
         </el-form>
       </form-component> </el-card
     ><banners ref="bannersRef" @reloadData="getData"></banners>
+    <content ref="contentRef" @reloadData="getData"></content>
   </div>
 </template>
 
@@ -295,7 +302,7 @@ import ChooseImage from "~/components/chooseImage.vue";
 import Search from "~/components/search.vue";
 import SearchItem from "~/components/SearchItem.vue";
 import Banners from "~/pages/goods/banners.vue";
-import Contnet from "~/pages/goods/content.vue";
+import Content from "~/pages/goods/content.vue";
 import { useInitTable, useInitForm } from "~/tools/useCommon.js";
 const {
   searchForm,
@@ -326,6 +333,7 @@ const {
   onGetListSuccess: (res) => {
     tableData.value = res.list.map((o) => {
       o.bannersLoading = false;
+      o.contentLoading = false;
       return o;
     });
     total.value = res.totalCount;
@@ -401,6 +409,11 @@ getCategoryList()
 const bannersRef = ref(null);
 const handleGoodsBanners = (row) => {
   bannersRef.value.open(row);
+};
+//商品详情组件
+const contentRef = ref(null);
+const handleGoodsContent = (row) => {
+  contentRef.value.open(row);
 };
 </script>
 

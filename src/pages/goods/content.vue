@@ -1,45 +1,60 @@
 <template>
-  <el-drawer
-    title="设置轮播图"
-    v-model="dialogVisible"
-    size="50%"
-    :destroy-on-close="true"
+  <form-component
+    ref="formComponentRef"
+    title="设置商品详情"
+    @submit="submit"
+    destroyOnClose
   >
-    <el-form :model="form" ref="formRef" label-width="80px">
-      <el-form-item label="轮播图">
-        <choose-image v-model="form.banners" :limit="9"></choose-image>
-      </el-form-item>
+    <el-form :model="form">
       <el-form-item>
-        <el-button type="primary" @click="submit">提交</el-button>
+        <Editor v-model="form.content" />
       </el-form-item>
     </el-form>
-  </el-drawer>
+  </form-component>
 </template>
 
 <script setup>
 import { ref, reactive } from "vue";
-import ChooseImage from "~/components/chooseImage.vue";
-import { readGoods, setGoodsBanner } from "~/api/goods";
+import FormComponent from "~/components/formComponent.vue";
+import Editor from "~/components/Editor.vue";
+import { readGoods, updateGoods } from "~/api/goods";
+import { messageInfo } from "~/tools/messagePopup";
 //设置弹框显示隐藏
-const dialogVisible = ref(false);
+const formComponentRef = ref(null);
 
 const form = reactive({
-  banners: [],
+  content: "",
 });
 
 //打开抽屉的方法
 const goodsId = ref(0);
 const open = (row) => {
   goodsId.value = row.id;
+  row.contentLoading = true;
   readGoods(goodsId.value)
     .then((res) => {
-      form.banners = res.goodsBanner.map((o) => o.url);
-      dialogVisible.value = true;
+      form.content = res.content;
+      formComponentRef.value.open();
     })
-    .finally(() => {});
+    .finally(() => {
+      row.contentLoading = false;
+    });
 };
+const emit = defineEmits(["reloadData"]);
+const loading = ref(false);
 //提交数据的方法
-const submit = () => {};
+const submit = () => {
+  formComponentRef.value.showLoading();
+  updateGoods(goodsId.value, form)
+    .then((res) => {
+      messageInfo("设置商品详情成功");
+      formComponentRef.value.close();
+      emit("reloadData");
+    })
+    .finally(() => {
+      formComponentRef.value.hideLoading();
+    });
+};
 
 defineExpose({
   open,
