@@ -22,7 +22,7 @@
 import { ref, reactive } from "vue";
 import ChooseImage from "~/components/chooseImage.vue";
 import { readGoods, setGoodsBanner } from "~/api/goods";
-import { messageInfo } from "../../../ligos-/src/tools/messagePopup";
+import { messageInfo } from "~/tools/messagePopup";
 //设置弹框显示隐藏
 const dialogVisible = ref(false);
 
