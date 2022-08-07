@@ -1,5 +1,5 @@
 <template>
-  <template v-if="modelValue">
+  <template v-if="modelValue && preview">
     <el-image
       v-if="typeof modelValue == 'string'"
       :src="modelValue"
@@ -26,7 +26,7 @@
       </div>
     </div>
   </template>
-  <div class="choose_image_btn" @click="open">
+  <div v-if="preview" class="choose_image_btn" @click="open">
     <el-icon :size="25" class="text-gray-500"><Plus /></el-icon>
   </div>
   <el-dialog title="选择图片" v-model="dialogVisible" width="80%" top="5vh">
@@ -67,8 +67,11 @@ import ImageAside from "~/components/layout/ImageAside.vue";
 import ImageMain from "~/components/layout/ImageMain.vue";
 import { messageInfo } from "../tools/messagePopup";
 const dialogVisible = ref(false);
+const callbackFunction = ref(null);
+
 //点击头像后打开关闭图库的方法
-const open = () => {
+const open = (callback = null) => {
+  callbackFunction.value = callback;
   dialogVisible.value = true;
 };
 const close = () => {
@@ -92,6 +95,10 @@ const handleUploadFile = () => {
 const props = defineProps({
   modelValue: [String, Array],
   limit: { type: Number, default: 1 },
+  preview: {
+    type: Boolean,
+    default: true,
+  },
 });
 const emit = defineEmits(["update:modelValue"]);
 let urls = [];
@@ -104,15 +111,19 @@ const submit = () => {
   if (props.limit == 1) {
     value = urls[0];
   } else {
-    value = [...props.modelValue, ...urls];
+    value = props.preview ? [...props.modelValue, ...urls] : [...urls];
     if (value.length > props.limit) {
-      return messageInfo(
-        `最多还能选择${props.limit - props.modelValue.length}张`
-      );
+      let limit = props.preview
+        ? props.limit - props.modelValue.length
+        : props.limit;
+      return messageInfo(`最多还能选择${limit}张`);
     }
   }
-  if (value) {
+  if (value && props.preview) {
     emit("update:modelValue", value);
+  }
+  if (!props.preview && typeof callbackFunction.value == "function") {
+    callbackFunction.value(value);
   }
   close();
 };
@@ -122,6 +133,12 @@ const removeImage = (url) => {
   const reurl = props.modelValue.filter((u) => u != url);
   emit("update:modelValue", reurl);
 };
+
+defineExpose({
+  open,
+  close,
+  submit,
+});
 </script>
 
 <style scoped>

@@ -1,9 +1,11 @@
 <template>
   <editor v-model="content" tag-name="div" :init="init" />
+  <choose-image ref="chooseImageRef" :limit="9" :preview="false"></choose-image>
 </template>
 <script setup>
 import tinymce from "tinymce/tinymce";
 import Editor from "@tinymce/tinymce-vue";
+import ChooseImage from "~/components/chooseImage.vue";
 import { ref, watch } from "vue";
 // 引用主题文件
 import "tinymce/themes/silver/theme";
@@ -45,7 +47,7 @@ import "tinymce/plugins/wordcount"; // 字数统计插件
 // v-model
 const props = defineProps({ modelValue: String });
 const emit = defineEmits(["update:modelValue"]);
-
+const chooseImageRef = ref(null);
 // 配置
 const init = {
   language_url: "/tinymce/langs/zh-Hans.js", // 中文语言包路径
@@ -70,14 +72,17 @@ const init = {
   elementpath: false,
   resize: false, // 禁止改变大小
   statusbar: false, // 隐藏底部状态栏
+
   setup: (editor) => {
     editor.ui.registry.addButton("imageUpload", {
       tooltip: "插入图片", //指上去的提示文字
       icon: "image",
       onAction() {
-        editor.insertContent(
-          `<img src="http://tangzhe123-com.oss-cn-shenzhen.aliyuncs.com/public/62af04afe39fa.jpg"  style="width:100%" />`
-        );
+        chooseImageRef.value.open((data) => {
+          data.forEach((url) => {
+            editor.insertContent(`<img src="${url}"  style="width:100%" />`);
+          });
+        });
       },
     });
   },
