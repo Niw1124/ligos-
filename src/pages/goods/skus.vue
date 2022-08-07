@@ -53,6 +53,8 @@ import FormComponent from "~/components/formComponent.vue";
 import { readGoods, updateGoodsSkus } from "~/api/goods";
 import { messageInfo } from "~/tools/messagePopup";
 import SkuCard from "~/pages/goods/components/SkuCard.vue";
+import { initSkuCardList, goodsId } from "~/tools/useSku.js";
+
 //设置弹框显示隐藏
 const formComponentRef = ref(null);
 
@@ -68,13 +70,11 @@ const form = reactive({
 });
 
 //打开抽屉的方法
-const goodsId = ref(0);
 const open = (row) => {
   goodsId.value = row.id;
   row.skusLoading = true;
   readGoods(goodsId.value)
     .then((res) => {
-      console.log(res);
       // 初始化form表单
       form.sku_type = res.sku_type;
       form.sku_value = res.sku_value || {
@@ -84,6 +84,9 @@ const open = (row) => {
         weight: 0,
         volume: 0,
       };
+      //初始化规格选项列表
+      initSkuCardList(res);
+
       formComponentRef.value.open();
     })
     .finally(() => {
