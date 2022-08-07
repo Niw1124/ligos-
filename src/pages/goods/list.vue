@@ -147,7 +147,13 @@
                 @click="handleEdit(scope.row)"
                 >修改</el-button
               >
-              <el-button class="px-1" type="primary" size="small" text
+              <el-button
+                class="px-1"
+                type="primary"
+                size="small"
+                text
+                @click="handleGoodsSkus(scope.row)"
+                :loading="scope.row.SkusLoading"
                 >商品规格</el-button
               >
               <el-button
@@ -283,6 +289,7 @@
       </form-component> </el-card
     ><banners ref="bannersRef" @reloadData="getData"></banners>
     <content ref="contentRef" @reloadData="getData"></content>
+    <skus ref="skusRef" @reloadData="getData"></skus>
   </div>
 </template>
 
@@ -293,6 +300,7 @@ import {
   createGoods,
   updateGoods,
   deleteGoods,
+  updateGoodsSkus,
 } from "~/api/goods.js";
 import { getCategoryList } from "~/api/category.js";
 import { ref } from "vue";
@@ -303,6 +311,7 @@ import Search from "~/components/search.vue";
 import SearchItem from "~/components/SearchItem.vue";
 import Banners from "~/pages/goods/banners.vue";
 import Content from "~/pages/goods/content.vue";
+import Skus from "~/pages/goods/skus.vue";
 import { useInitTable, useInitForm } from "~/tools/useCommon.js";
 const {
   searchForm,
@@ -334,6 +343,7 @@ const {
     tableData.value = res.list.map((o) => {
       o.bannersLoading = false;
       o.contentLoading = false;
+      o.skusLoading = false;
       return o;
     });
     total.value = res.totalCount;
@@ -414,6 +424,11 @@ const handleGoodsBanners = (row) => {
 const contentRef = ref(null);
 const handleGoodsContent = (row) => {
   contentRef.value.open(row);
+};
+//商品规格组件
+const skusRef = ref(null);
+const handleGoodsSkus = (row) => {
+  skusRef.value.open(row);
 };
 </script>
 
