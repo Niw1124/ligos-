@@ -40,7 +40,9 @@
           </el-input>
         </el-form-item>
       </template>
-      <template v-else>111 </template>
+      <template v-else>
+        <SkuCard />
+      </template>
     </el-form>
   </form-component>
 </template>
@@ -50,6 +52,7 @@ import { ref, reactive } from "vue";
 import FormComponent from "~/components/formComponent.vue";
 import { readGoods, updateGoodsSkus } from "~/api/goods";
 import { messageInfo } from "~/tools/messagePopup";
+import SkuCard from "~/pages/goods/components/SkuCard.vue";
 //设置弹框显示隐藏
 const formComponentRef = ref(null);
 
