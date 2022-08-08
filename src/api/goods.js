@@ -46,3 +46,7 @@ export function deleteGoodsSkusCard(id) {
 export function sortGoodsSkusCard(data) {
   return axios.post(`/admin/goods_skus_card/sort`, data);
 }
+//添加规格选项的值
+export function createGoodsSkusCardValue(data) {
+  return axios.post("/admin/goods_skus_card_value", data);
+}
