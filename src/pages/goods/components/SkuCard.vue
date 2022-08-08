@@ -32,13 +32,23 @@
       </template>
       <!-- card body --><SkuCardItem :skuCardId="item.id" />
     </el-card>
-    <el-button type="success" size="small">添加规格</el-button>
+    <el-button
+      type="success"
+      size="small"
+      @click="createSkuCardEvent"
+      :loading="btnLoading"
+      >添加规格</el-button
+    >
   </el-form-item>
 </template>
 
 <script setup>
 import SkuCardItem from "./SkuCardItem.vue";
-import { sku_card_list } from "~/tools/useSku.js";
+import {
+  sku_card_list,
+  createSkuCardEvent,
+  btnLoading,
+} from "~/tools/useSku.js";
 </script>
 
 <style>
