@@ -5,6 +5,7 @@ import {
   deleteGoodsSkusCard,
   sortGoodsSkusCard,
   createGoodsSkusCardValue,
+  updateGoodsSkusCardValue,
 } from "~/api/goods";
 import { messageInfo } from "~/tools/messagePopup";
 import { ArrayMoveUp, ArrayMovedown } from "~/tools/useArrayIndexUpOrDown.js";
@@ -134,6 +135,8 @@ export function initSkuCardItem(id) {
     });
   };
   const loading = ref(false);
+
+  //添加规格值
   const handleInputConfirm = () => {
     //如果没有值就直接关闭并return终止掉
     if (!inputValue) {
@@ -161,6 +164,30 @@ export function initSkuCardItem(id) {
       });
   };
 
+  //修改规格值
+  const handleChange = (value, tag) => {
+    console.log("value", value);
+    console.log("tag", tag);
+    loading.value = true;
+    updateGoodsSkusCardValue(tag.id, {
+      goods_skus_card_id: id,
+      name: item.name,
+      order: tag.order,
+      value: value,
+    })
+      .then((res) => {
+        //修改成功之后将tag的值改为新值
+        tag.value = value;
+      })
+      .catch((err) => {
+        //失败的话就该回原来的值
+        tag.text = tag.value;
+      })
+      .finally(() => {
+        loading.value = false;
+      });
+  };
+
   return {
     item,
     inputValue,
@@ -170,5 +197,6 @@ export function initSkuCardItem(id) {
     showInput,
     handleInputConfirm,
     loading,
+    handleChange,
   };
 }

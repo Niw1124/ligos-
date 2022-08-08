@@ -9,7 +9,13 @@
       @close="handleClose(tag)"
       effect="plain"
     >
-      {{ tag.text }}
+      <el-input
+        class="w-20 ml-[-10px]"
+        v-model="tag.text"
+        size="small"
+        clearable
+        @change="handleChange($event, tag)"
+      ></el-input>
     </el-tag>
     <el-input
       v-if="inputVisible"
@@ -46,6 +52,7 @@ const {
   showInput,
   handleInputConfirm,
   loading,
+  handleChange,
 } = initSkuCardItem(props.skuCardId);
 </script>
 
