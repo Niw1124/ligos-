@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { createGoodsSkusCard } from "~/api/goods";
+import { createGoodsSkusCard, updateGoodsSkusCard } from "~/api/goods";
 //当前商品ID存起来
 export const goodsId = ref(0);
 
@@ -41,6 +41,26 @@ export function createSkuCardEvent() {
     })
     .finally(() => {
       btnLoading.value = false;
+    });
+}
+
+//修改规格选项
+export function handleUpdate(item) {
+  item.loading = true;
+  updateGoodsSkusCard(item.id, {
+    goods_id: item.goods_id,
+    name: item.text,
+    order: item.order,
+    type: item.type,
+  })
+    .then((res) => {
+      item.name = item.text;
+    })
+    .catch((err) => {
+      item.text = item.name;
+    })
+    .finally(() => {
+      item.loading = false;
     });
 }
 

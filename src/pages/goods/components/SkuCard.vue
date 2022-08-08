@@ -5,6 +5,7 @@
       class="w-full mb-3"
       v-for="(item, index) in sku_card_list"
       :key="item.id"
+      v-loading="item.loading"
     >
       <template #header>
         <div class="flex items-center">
@@ -12,6 +13,7 @@
             v-model="item.text"
             placeholder="规格名称"
             style="width: 200px"
+            @change="handleUpdate(item)"
           >
             <template #append>
               <el-icon><more /></el-icon>
@@ -48,6 +50,7 @@ import {
   sku_card_list,
   createSkuCardEvent,
   btnLoading,
+  handleUpdate,
 } from "~/tools/useSku.js";
 </script>
 
