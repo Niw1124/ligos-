@@ -20,10 +20,16 @@
             </template>
           </el-input>
           <div class="ml-auto">
-            <el-button size="small"
+            <el-button
+              size="small"
+              @click="sortCard('up', index)"
+              :disabled="index == 0"
               ><el-icon><Top /></el-icon
             ></el-button>
-            <el-button size="small"
+            <el-button
+              size="small"
+              @click="sortCard('down', index)"
+              :disabled="index == sku_card_list.length - 1"
               ><el-icon><Bottom /></el-icon
             ></el-button>
             <el-popconfirm
@@ -61,6 +67,7 @@ import {
   btnLoading,
   handleUpdate,
   handleDelete,
+  sortCard,
 } from "~/tools/useSku.js";
 </script>
 

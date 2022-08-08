@@ -5,6 +5,7 @@ import {
   deleteGoodsSkusCard,
 } from "~/api/goods";
 import { messageInfo } from "~/tools/messagePopup";
+import { ArrayMoveUp, ArrayMovedown } from "~/tools/useArrayIndexUpOrDown.js";
 //当前商品ID存起来
 export const goodsId = ref(0);
 
@@ -83,6 +84,16 @@ export function handleDelete(item) {
       messageInfo("删除成功");
     }
   });
+}
+
+//排序规格选项
+export function sortCard(action, index) {
+  //sku_card_list.value是要操作的数组
+  if (action == "up") {
+    ArrayMoveUp(sku_card_list.value, index);
+  } else {
+    ArrauMovedown(sku_card_list.value, index);
+  }
 }
 
 //初始化规格值
