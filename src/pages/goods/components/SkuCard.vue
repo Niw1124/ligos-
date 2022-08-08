@@ -26,9 +26,18 @@
             <el-button size="small"
               ><el-icon><Bottom /></el-icon
             ></el-button>
-            <el-button size="small"
-              ><el-icon><Delete /></el-icon
-            ></el-button>
+            <el-popconfirm
+              title="你确定要删除该规格选项？"
+              confirmButtonText="确认"
+              cancelButtonText="取消"
+              @confirm="handleDelete(item)"
+            >
+              <template #reference>
+                <el-button size="small"
+                  ><el-icon><Delete /></el-icon
+                ></el-button>
+              </template>
+            </el-popconfirm>
           </div>
         </div>
       </template>
@@ -51,6 +60,7 @@ import {
   createSkuCardEvent,
   btnLoading,
   handleUpdate,
+  handleDelete,
 } from "~/tools/useSku.js";
 </script>
 

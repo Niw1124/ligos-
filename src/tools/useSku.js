@@ -1,5 +1,10 @@
 import { ref } from "vue";
-import { createGoodsSkusCard, updateGoodsSkusCard } from "~/api/goods";
+import {
+  createGoodsSkusCard,
+  updateGoodsSkusCard,
+  deleteGoodsSkusCard,
+} from "~/api/goods";
+import { messageInfo } from "~/tools/messagePopup";
 //当前商品ID存起来
 export const goodsId = ref(0);
 
@@ -38,6 +43,7 @@ export function createSkuCardEvent() {
         loading: false,
         goodsSkusCardValue: [],
       });
+      messageInfo("添加成功");
     })
     .finally(() => {
       btnLoading.value = false;
@@ -55,13 +61,28 @@ export function handleUpdate(item) {
   })
     .then((res) => {
       item.name = item.text;
+      messageInfo("修改成功");
     })
     .catch((err) => {
       item.text = item.name;
+      messageInfo("删除失败");
     })
     .finally(() => {
       item.loading = false;
     });
+}
+//删除规格选项
+export function handleDelete(item) {
+  item.loading = true;
+  deleteGoodsSkusCard(item.id).then((res) => {
+    //findIndex()方法返回数组中满足提供的测试函数的第一个元素的索引。若没有找到对应元素则返回-1。
+    //findIndex如果没找到就返回-1 如果在sku_card_list里面找到了该id，就删除该位置的索引
+    const i = sku_card_list.value.findIndex((o) => o.id == item.id);
+    if (i != -1) {
+      sku_card_list.value.splice(i, 1);
+      messageInfo("删除成功");
+    }
+  });
 }
 
 //初始化规格值
