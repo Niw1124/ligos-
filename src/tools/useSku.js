@@ -6,6 +6,7 @@ import {
   sortGoodsSkusCard,
   createGoodsSkusCardValue,
   updateGoodsSkusCardValue,
+  deleteGoodsSkusCardValue,
 } from "~/api/goods";
 import { messageInfo } from "~/tools/messagePopup";
 import { ArrayMoveUp, ArrayMovedown } from "~/tools/useArrayIndexUpOrDown.js";
@@ -119,13 +120,24 @@ export function sortCard(action, index) {
 export function initSkuCardItem(id) {
   //因为前面规格选项列表中用到了goodsSkusCardValue的数据所以要检查传过来的id是否和sku_card_list的id一致，如果一致就拿到并以对象的形式返回，这样就可以在skuCardItem中拿到
   const item = sku_card_list.value.find((o) => o.id == id);
-
+  const loading = ref(false);
   const inputValue = ref("");
   const inputVisible = ref(false);
   const InputRef = ref();
 
+  //删除规格选项值
   const handleClose = (tag) => {
-    dynamicTags.value.splice(dynamicTags.value.indexOf(tag), 1);
+    loading.value = true;
+    deleteGoodsSkusCardValue(tag.id)
+      .then((res) => {
+        let i = item.goodsSkusCardValue.findIndex((o) => o.id == tag.id);
+        if (i != -1) {
+          item.goodsSkusCardValue.splice(i, 1);
+        }
+      })
+      .finally(() => {
+        loading.value = false;
+      });
   };
 
   const showInput = () => {
@@ -134,7 +146,6 @@ export function initSkuCardItem(id) {
       InputRef.value.input.focus();
     });
   };
-  const loading = ref(false);
 
   //添加规格值
   const handleInputConfirm = () => {
