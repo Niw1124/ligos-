@@ -3,6 +3,7 @@ import {
   createGoodsSkusCard,
   updateGoodsSkusCard,
   deleteGoodsSkusCard,
+  sortGoodsSkusCard,
 } from "~/api/goods";
 import { messageInfo } from "~/tools/messagePopup";
 import { ArrayMoveUp, ArrayMovedown } from "~/tools/useArrayIndexUpOrDown.js";
@@ -85,15 +86,31 @@ export function handleDelete(item) {
     }
   });
 }
-
+export const bodyLoading = ref(false);
 //排序规格选项
+
 export function sortCard(action, index) {
-  //sku_card_list.value是要操作的数组
-  if (action == "up") {
-    ArrayMoveUp(sku_card_list.value, index);
-  } else {
-    ArrauMovedown(sku_card_list.value, index);
-  }
+  let oList = JSON.parse(JSON.stringify(sku_card_list.value));
+  // sku_card_list.value是要操作的数组
+  let func = action == "up" ? ArrayMoveUp : ArrayMovedown;
+  func(oList, index);
+  //o表示当前对象 i表示当前索引 经过map处理后变成后端要的结构
+  let sortData = oList.map((o, i) => {
+    return {
+      id: o.id,
+      order: i + 1,
+    };
+  });
+  bodyLoading.value = true;
+  sortGoodsSkusCard({ sortdata: sortData })
+    .then((res) => {
+      //成功后再修改原数组的位置，相当于要执行两次   if (action == "up") {     ArrayMoveUp(oList, index);  } else {     ArrauMovedown(oList, index); }
+      //为了防止代码冗余用func接收一下action == "up" ? ArrayMoveUp : ArrauMovedown;
+      func(sku_card_list.value, index);
+    })
+    .finally(() => {
+      bodyLoading.value = false;
+    });
 }
 
 //初始化规格值

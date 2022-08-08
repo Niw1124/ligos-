@@ -1,5 +1,5 @@
 <template>
-  <el-form-item label="添加规格">
+  <el-form-item label="添加规格" v-loading="bodyLoading">
     <el-card
       shadow="never"
       class="w-full mb-3"
@@ -68,6 +68,7 @@ import {
   handleUpdate,
   handleDelete,
   sortCard,
+  bodyLoading,
 } from "~/tools/useSku.js";
 </script>
 
