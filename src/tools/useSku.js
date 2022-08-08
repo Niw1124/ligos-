@@ -117,5 +117,37 @@ export function sortCard(action, index) {
 export function initSkuCardItem(id) {
   //因为前面规格选项列表中用到了goodsSkusCardValue的数据所以要检查传过来的id是否和sku_card_list的id一致，如果一致就拿到并以对象的形式返回，这样就可以在skuCardItem中拿到
   const item = sku_card_list.value.find((o) => o.id == id);
-  return { item };
+
+  const inputValue = ref("");
+  const inputVisible = ref(false);
+  const InputRef = ref();
+
+  const handleClose = (tag) => {
+    dynamicTags.value.splice(dynamicTags.value.indexOf(tag), 1);
+  };
+
+  const showInput = () => {
+    inputVisible.value = true;
+    nextTick(() => {
+      InputRef.value.input.focus();
+    });
+  };
+
+  const handleInputConfirm = () => {
+    if (inputValue.value) {
+      dynamicTags.value.push(inputValue.value);
+    }
+    inputVisible.value = false;
+    inputValue.value = "";
+  };
+
+  return {
+    item,
+    inputValue,
+    inputVisible,
+    InputRef,
+    handleClose,
+    showInput,
+    handleInputConfirm,
+  };
 }
