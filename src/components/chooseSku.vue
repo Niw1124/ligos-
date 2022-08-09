@@ -3,16 +3,15 @@
     <el-container style="height: 65vh">
       <el-aside width="220px" class="chooseSku">
         <div class="top">
-          {{ tableData }}
-          <!-- <aside-list
-            v-for="(item, index) in list"
+          <div
+            class="sku-list"
+            v-for="(item, index) in tableData"
             :key="index"
-            :active="activeId == item.id"
-            @edit="handleEdit(item)"
-            @delete="handleDelete(item.id)"
+            :class="{ active: activeId == item.id }"
             @click="handleChangeActiveId(item.id)"
-            >{{ item.name }}</aside-list
-          > -->
+          >
+            {{ item.name }}
+          </div>
         </div>
         <div class="bottom">
           <!-- 分页 -->
@@ -26,7 +25,13 @@
           />
         </div>
       </el-aside>
-      <el-main> 主体部分 </el-main>
+      <el-main>
+        <el-checkbox-group v-model="form.list">
+          <el-checkbox v-for="item in list" :key="item" :label="item" border>
+            {{ item }}
+          </el-checkbox>
+        </el-checkbox-group>
+      </el-main>
     </el-container>
     <template #footer>
       <span>
@@ -38,7 +43,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 import { getSkusList } from "~/api/skus.js";
 import { useInitTable } from "~/tools/useCommon.js";
 const dialogVisible = ref(false);
@@ -47,6 +52,14 @@ const dialogVisible = ref(false);
 const { tableData, total, limit, getData, loading, currentPage } = useInitTable(
   {
     getList: getSkusList,
+    onGetListSuccess(res) {
+      //将获取到的列表数据赋值给tableData，获取到的总数赋值给total
+      tableData.value = res.list;
+      total.value = res.totalCount;
+      if (tableData.value.length > 0) {
+        handleChangeActiveId(tableData.value[0].id);
+      }
+    },
   }
 );
 
@@ -59,8 +72,25 @@ const open = () => {
 const close = () => {
   dialogVisible.value = false;
 };
-const submit = () => {};
 
+//侧边栏激活状态和点击侧边栏切换主体内容
+const list = ref([]);
+const form = reactive({
+  list: [],
+});
+const activeId = ref(0);
+function handleChangeActiveId(id) {
+  activeId.value = id;
+  list.value = [];
+  //在tableData中找到传入id对应的item保存下来
+  let item = tableData.value.find((o) => o.id == id);
+  if (item) {
+    //将其转换为数组格式
+    list.value = item.default.split(",");
+  }
+}
+
+const submit = () => {};
 //将方法导出
 defineExpose({
   open,
@@ -88,5 +118,13 @@ defineExpose({
   left: 0;
   right: 0;
   @apply flex items-center justify-center;
+}
+.sku-list {
+  border-bottom: 1px solid #f4f4f4;
+  @apply p-3 text-sm text-gray-600 flex items-center cursor-pointer;
+}
+.sku-list:hover,
+.active {
+  @apply bg-blue-50;
 }
 </style>
