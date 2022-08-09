@@ -1,4 +1,4 @@
-import { ref, nextTick } from "vue";
+import { ref, nextTick, computed } from "vue";
 import {
   createGoodsSkusCard,
   updateGoodsSkusCard,
@@ -17,6 +17,9 @@ export const goodsId = ref(0);
 //规格选项列表
 export const sku_card_list = ref([]);
 
+//表格数据存储
+export const skuList = ref([]);
+
 //初始化规格选项列表
 export function initSkuCardList(d) {
   sku_card_list.value = d.goodsSkusCard.map((item) => {
@@ -30,6 +33,7 @@ export function initSkuCardList(d) {
     });
     return item;
   });
+  skuList.value = d.goodsSkus;
 }
 //增强体验添加loading
 export const btnLoading = ref(false);
@@ -231,5 +235,68 @@ export function initSkuCardItem(id) {
     handleInputConfirm,
     loading,
     handleChange,
+  };
+}
+//初始化表格
+export function initSkuTable() {
+  const skuLabels = computed(() => {
+    sku_card_list.value.filter((v) => {
+      //如果新添加的规格他没有规格值的话就没有必要添加到表格中,将合格的数据返回到skuLabels中
+      v.goodsSkusCardValue.length > 0;
+    });
+  });
+  //获取表头
+  const tableThs = computed(() => {
+    let length = sku_card_list.value.length;
+    return [
+      {
+        name: "商品规格",
+        colspan: length,
+        width: "",
+        //如果有数据就纵向合并一行否则合并两行
+        rowspan: length > 0 ? 1 : 2,
+      },
+      {
+        name: "销售价",
+        width: "",
+        rowspan: 2,
+      },
+      {
+        name: "市场价",
+        width: "",
+        rowspan: 2,
+      },
+      {
+        name: "成本价",
+        width: "",
+        rowspan: 2,
+      },
+      {
+        name: "库存",
+        width: "",
+        rowspan: 2,
+      },
+      {
+        name: "体积",
+        width: "",
+        rowspan: 2,
+      },
+      {
+        name: "重量",
+        width: "",
+        rowspan: 2,
+      },
+      {
+        name: "编码",
+        width: "",
+        rowspan: 2,
+      },
+    ];
+  });
+
+  return {
+    skuLabels,
+    tableThs,
+    sku_card_list,
   };
 }
