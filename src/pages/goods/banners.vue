@@ -34,6 +34,7 @@ const form = reactive({
 const goodsId = ref(0);
 const open = (row) => {
   goodsId.value = row.id;
+  //给轮播图一个加载状态
   row.bannersLoading = true;
   readGoods(goodsId.value)
     .then((res) => {
@@ -45,8 +46,11 @@ const open = (row) => {
     });
 };
 const emit = defineEmits(["reloadData"]);
+
 const loading = ref(false);
+
 //提交数据的方法
+const loading = ref(false);
 const submit = () => {
   loading.value = true;
   setGoodsBanner(goodsId.value, form)

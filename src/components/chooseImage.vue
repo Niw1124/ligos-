@@ -130,8 +130,10 @@ const submit = () => {
 
 const removeImage = (url) => {
   //把不等于url的值返回，剩下的移除
-  const reurl = props.modelValue.filter((u) => u != url);
-  emit("update:modelValue", reurl);
+  emit(
+    "update:modelValue",
+    props.modelValue.filter((u) => u != url)
+  );
 };
 
 defineExpose({

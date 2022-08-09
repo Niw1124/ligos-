@@ -149,8 +149,10 @@
               >
               <el-button
                 class="px-1"
-                type="primary"
                 size="small"
+                :type="
+                  scope.row.goods_banner.length == 0 ? 'danger' : 'primary'
+                "
                 text
                 @click="handleGoodsSkus(scope.row)"
                 :loading="scope.row.SkusLoading"
@@ -288,8 +290,10 @@
         </el-form>
       </form-component> </el-card
     ><banners ref="bannersRef" @reloadData="getData"></banners>
+    <<<<<<< HEAD
     <content ref="contentRef" @reloadData="getData"></content>
     <skus ref="skusRef" @reloadData="getData"></skus>
+    ======= >>>>>>> c8120b4cb7ff917c9c44b7cca449e013aa862c3a
   </div>
 </template>
 
