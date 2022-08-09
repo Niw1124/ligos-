@@ -7,6 +7,7 @@ import {
   createGoodsSkusCardValue,
   updateGoodsSkusCardValue,
   deleteGoodsSkusCardValue,
+  chooseAndSetGoodsSkuCard,
 } from "~/api/goods";
 import { messageInfo } from "~/tools/messagePopup";
 import { ArrayMoveUp, ArrayMovedown } from "~/tools/useArrayIndexUpOrDown.js";
@@ -114,6 +115,15 @@ export function sortCard(action, index) {
     .finally(() => {
       bodyLoading.value = false;
     });
+}
+
+//选择设置规格
+export function handleChooseAndSetGoodsSkuCard(id, data) {
+  chooseAndSetGoodsSkuCard(id, data)
+    .then((res) => {
+      console.log(res);
+    })
+    .finally(() => {});
 }
 
 //初始化规格值

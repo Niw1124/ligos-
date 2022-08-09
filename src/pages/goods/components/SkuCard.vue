@@ -74,12 +74,18 @@ import {
   handleDelete,
   sortCard,
   bodyLoading,
+  handleChooseAndSetGoodsSkuCard,
 } from "~/tools/useSku.js";
 
 //
 const chooseSkuRef = ref(null);
-const handleChooseSku = () => {
-  chooseSkuRef.value.open();
+const handleChooseSku = (item) => {
+  chooseSkuRef.value.open((value) => {
+    handleChooseAndSetGoodsSkuCard(item.id, {
+      name: value.name,
+      value: value.list,
+    });
+  });
 };
 </script>
 

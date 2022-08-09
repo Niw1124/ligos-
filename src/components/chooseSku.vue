@@ -62,11 +62,12 @@ const { tableData, total, limit, getData, loading, currentPage } = useInitTable(
     },
   }
 );
-
+const callbackFunction = ref(null);
 //打开弹框的方法
-const open = () => {
-  dialogVisible.value = true;
+const open = (callback = null) => {
+  callbackFunction.value = callback;
   getData(1);
+  dialogVisible.value = true;
 };
 //关闭弹框的方法
 const close = () => {
@@ -76,6 +77,7 @@ const close = () => {
 //侧边栏激活状态和点击侧边栏切换主体内容
 const list = ref([]);
 const form = reactive({
+  name: "",
   list: [],
 });
 const activeId = ref(0);
@@ -87,10 +89,16 @@ function handleChangeActiveId(id) {
   if (item) {
     //将其转换为数组格式
     list.value = item.default.split(",");
+    form.name = item.name;
   }
 }
 
-const submit = () => {};
+const submit = () => {
+  if (typeof callbackFunction.value == "function") {
+    callbackFunction.value(form);
+  }
+  dialogVisible.value = false;
+};
 //将方法导出
 defineExpose({
   open,
