@@ -119,11 +119,23 @@ export function sortCard(action, index) {
 
 //选择设置规格
 export function handleChooseAndSetGoodsSkuCard(id, data) {
+  //在sku_card_list中找和传入id匹配的规格的id
+  let item = sku_card_list.value.find((o) => o.id == id);
+  item.loading = true;
   chooseAndSetGoodsSkuCard(id, data)
     .then((res) => {
       console.log(res);
+      //规格选项对应数据
+      item.name = item.text = res.goods_skus_card.name;
+      //规格值的对应数据
+      item.goodsSkusCardValue = res.goods_skus_card_value.map((o) => {
+        o.text = o.value || "属性值";
+        return o;
+      });
     })
-    .finally(() => {});
+    .finally(() => {
+      item.loading = false;
+    });
 }
 
 //初始化规格值
