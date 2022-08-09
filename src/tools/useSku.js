@@ -18,7 +18,7 @@ export const goodsId = ref(0);
 export const sku_card_list = ref([]);
 
 //表格数据存储
-export const skuList = ref([]);
+export const sku_list = ref([]);
 
 //初始化规格选项列表
 export function initSkuCardList(d) {
@@ -33,7 +33,8 @@ export function initSkuCardList(d) {
     });
     return item;
   });
-  skuList.value = d.goodsSkus;
+
+  sku_list.value = d.goodsSkus;
 }
 //增强体验添加loading
 export const btnLoading = ref(false);
@@ -67,7 +68,7 @@ export function handleUpdate(item) {
     goods_id: item.goods_id,
     name: item.text,
     order: item.order,
-    type: item.type,
+    type: 0,
   })
     .then((res) => {
       item.name = item.text;
@@ -110,7 +111,9 @@ export function sortCard(action, index) {
     };
   });
   bodyLoading.value = true;
-  sortGoodsSkusCard({ sortdata: sortData })
+  sortGoodsSkusCard({
+    sortdata: sortData,
+  })
     .then((res) => {
       //成功后再修改原数组的位置，相当于要执行两次   if (action == "up") {     ArrayMoveUp(oList, index);  } else {     ArrauMovedown(oList, index); }
       //为了防止代码冗余用func接收一下action == "up" ? ArrayMoveUp : ArrauMovedown;
@@ -176,7 +179,7 @@ export function initSkuCardItem(id) {
   //添加规格值
   const handleInputConfirm = () => {
     //如果没有值就直接关闭并return终止掉
-    if (!inputValue) {
+    if (!inputValue.value) {
       inputVisible.value = false;
       return;
     }
@@ -203,8 +206,6 @@ export function initSkuCardItem(id) {
 
   //修改规格值
   const handleChange = (value, tag) => {
-    console.log("value", value);
-    console.log("tag", tag);
     loading.value = true;
     updateGoodsSkusCardValue(tag.id, {
       goods_skus_card_id: id,
@@ -239,15 +240,13 @@ export function initSkuCardItem(id) {
 }
 //初始化表格
 export function initSkuTable() {
-  const skuLabels = computed(() => {
-    sku_card_list.value.filter((v) => {
-      //如果新添加的规格他没有规格值的话就没有必要添加到表格中,将合格的数据返回到skuLabels中
-      v.goodsSkusCardValue.length > 0;
-    });
-  });
+  const skuLabels = computed(() =>
+    sku_card_list.value.filter((v) => v.goodsSkusCardValue.length > 0)
+  );
+  //如果新添加的规格他没有规格值的话就没有必要添加到表格中,将合格的数据返回到skuLabels中
   //获取表头
   const tableThs = computed(() => {
-    let length = sku_card_list.value.length;
+    let length = skuLabels.value.length;
     return [
       {
         name: "商品规格",
@@ -258,37 +257,37 @@ export function initSkuTable() {
       },
       {
         name: "销售价",
-        width: "",
+        width: "100",
         rowspan: 2,
       },
       {
         name: "市场价",
-        width: "",
+        width: "100",
         rowspan: 2,
       },
       {
         name: "成本价",
-        width: "",
+        width: "100",
         rowspan: 2,
       },
       {
         name: "库存",
-        width: "",
+        width: "100",
         rowspan: 2,
       },
       {
         name: "体积",
-        width: "",
+        width: "100",
         rowspan: 2,
       },
       {
         name: "重量",
-        width: "",
+        width: "100",
         rowspan: 2,
       },
       {
         name: "编码",
-        width: "",
+        width: "100",
         rowspan: 2,
       },
     ];
@@ -297,6 +296,6 @@ export function initSkuTable() {
   return {
     skuLabels,
     tableThs,
-    sku_card_list,
+    sku_list,
   };
 }
