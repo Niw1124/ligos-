@@ -47,8 +47,6 @@ const open = (row) => {
 };
 const emit = defineEmits(["reloadData"]);
 
-const loading = ref(false);
-
 //提交数据的方法
 const loading = ref(false);
 const submit = () => {
