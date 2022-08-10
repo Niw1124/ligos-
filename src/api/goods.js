@@ -18,6 +18,14 @@ export function updateGoods(id, data) {
 export function deleteGoods(ids) {
   return axios.post(`/admin/goods/delete_all`, { ids });
 }
+//批量恢复
+export function restoreGoods(ids) {
+  return axios.post(`/admin/goods/restore`, { ids });
+}
+//彻底删除
+export function destoryGoods(ids) {
+  return axios.post(`/admin/goods/destroy`, { ids });
+}
 //查看商品资料
 export function readGoods(id) {
   return axios.get(`/admin/goods/read/${id}`);

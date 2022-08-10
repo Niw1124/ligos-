@@ -343,25 +343,61 @@ function getTableData() {
     if (list.length == 0) {
       return [];
     }
-    console.log(list);
+    //获取之前的规格列表，将规格ID排序之后转化成字符串
+    let berforeSkuList = JSON.parse(JSON.stringify(sku_list.value)).map((o) => {
+      // o.skusId = "290-282";
+      //如果o.skus不是数组
+      if (!Array.isArray(o.skus)) {
+        //Object.keys拿到两个键，组成数组是[0,1],拿到键就可以取到值o.skus[k]，就可以将值组成的数组返回给o.skus
+        o.skus = Object.keys(o.skus).map((k) => o.skus[k]);
+      }
+      //将o.skus数组排序map相当于只拿到290和282再转成字符串
+      o.skusId = o.skus
+        .sort((a, b) => a.id - b.id)
+        .map((s) => s.id)
+        .join(","); //(290,282)
+      return o; //返回的o就包含一个唯一性的id了
+    });
+
     //arr就是排列组合之后的数据了
     let arr = cartesianProductOf(...list);
     sku_list.value = [];
     //把整理之后的值赋值给sku_card_list即可
-    sku_list.value = arr.map((o) => {
+    sku_list.value = arr.map((skus) => {
+      let o = getBeforSkuItem(JSON.parse(JSON.stringify(skus)), berforeSkuList);
+
       return {
-        code: "",
-        cprice: "0.00",
+        code: o?.code || "",
+        cprice: o?.cprice || "0.00",
         goods_id: goodsId.value,
-        image: "",
-        oprice: "0.00",
-        pprice: "1.00",
+        image: o?.image || "",
+        oprice: o?.oprice || "0.00",
+        pprice: o?.pprice || "0.00",
         //o是一个数组
-        skus: o,
-        stock: 0,
-        volume: 0,
-        weight: 0,
+        skus: skus,
+        stock: o?.stock || 0,
+        volume: o?.volume || 0,
+        weight: o?.weight || 0,
       };
     });
   }, 200);
+}
+//skus表示新的skus相当于新的o.skus  berforeSkuList表示老的skus
+function getBeforSkuItem(skus, berforeSkuList) {
+  //skusId是新的处理后的id
+  let skusId = skus
+    .sort((a, b) => a.id - b.id)
+    .map((s) => s.id)
+    .join(","); //同之前的处理步骤
+
+  //如果find方法去查，o代表拿到之前这个数组的每个对象
+  //return回的是true说明找到了,再通过return返回这个对象
+  return berforeSkuList.find((o) => {
+    if (skusId.length > o.skusId.length) {
+      //新的比旧的长  看新的有没有包含老的id
+      return skusId.indexOf(o.skusId) != -1;
+    }
+    //
+    return o.skusId.indexOf(skusId) != -1;
+  });
 }

@@ -145,6 +145,7 @@ export function useInitTable(opt = {}) {
     handleMultiDelete,
     //批量修改状态
     handleMultiStatusChange,
+    multiSelectionIds,
   };
 }
 

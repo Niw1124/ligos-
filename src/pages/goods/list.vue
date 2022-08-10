@@ -39,11 +39,36 @@
 
       <!-- 新增和刷新 -->
       <list-header
-        layout="increment,refresh,delete"
+        layout="increment,refresh"
         @refresh="getData"
         @increment="handleCreateForm"
-        @delete="handleMultiDelete"
       >
+        <el-button
+          type="danger"
+          size="small"
+          @click="handleMultiDelete(1)"
+          v-if="searchForm.tab != 'delete'"
+          >批量删除</el-button
+        >
+        <el-button
+          type="warning"
+          size="small"
+          @click="handleRestoreGoods(1)"
+          v-if="searchForm.tab == 'delete'"
+          >恢复商品</el-button
+        >
+        <el-popconfirm
+          v-if="searchForm.tab == 'delete'"
+          title="你确定彻底删除该商品？"
+          confirmButtonText="确认"
+          cancelButtonText="取消"
+          @confirm="handleDestoryGoods"
+        >
+          <template #reference>
+            <el-button type="danger" size="small">彻底删除</el-button>
+          </template>
+        </el-popconfirm>
+
         <el-button
           size="small"
           @click="handleMultiStatusChange(1)"
@@ -185,7 +210,7 @@
                 title="你确定要删除该商品？"
                 confirmButtonText="确认"
                 cancelButtonText="取消"
-                @confirm="handleDelete(scope.row.id)"
+                @confirm="handleDelete([scope.row.id])"
               >
                 <template #reference>
                   <el-button type="primary" size="small" text>删除</el-button>
@@ -306,6 +331,8 @@ import {
   updateGoods,
   deleteGoods,
   updateGoodsSkus,
+  restoreGoods,
+  destoryGoods,
 } from "~/api/goods.js";
 import { getCategoryList } from "~/api/category.js";
 import { ref } from "vue";
@@ -335,6 +362,7 @@ const {
   handleMultiDelete,
   //批量修改状态
   handleMultiStatusChange,
+  multiSelectionIds,
 } = useInitTable({
   searchForm: {
     title: "",
@@ -434,6 +462,32 @@ const handleGoodsContent = (row) => {
 const skusRef = ref(null);
 const handleGoodsSkus = (row) => {
   skusRef.value.open(row);
+};
+//恢复和彻底删除的封装
+function useMutiAction(Action, message) {
+  loading.value = true;
+  Action(multiSelectionIds.value)
+    .then((res) => {
+      messageInfo(message + "成功");
+      //清空选中
+      if (ListHeaderRef.value) {
+        //执行该节点中的清除选中方法
+        ListHeaderRef.value.clearSelection();
+      }
+      getData();
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+}
+//恢复商品
+import { messageInfo } from "~/tools/messagePopup";
+const handleRestoreGoods = () => {
+  useMutiAction(restoreGoods, "恢复");
+};
+//彻底删除商品
+const handleDestoryGoods = () => {
+  useMutiAction(destoryGoods, "彻底删除");
 };
 </script>
 

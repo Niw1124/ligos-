@@ -29,7 +29,7 @@
             width="100"
             class="border text-center"
             v-for="(skus, skusi) in item.skus"
-            :key="skui"
+            :key="skusi"
           >
             {{ skus.value }}
           </td>
