@@ -35,6 +35,7 @@ export function initSkuCardList(d) {
   });
 
   sku_list.value = d.goodsSkus;
+  // console.log(sku_list);
 }
 //增强体验添加loading
 export const btnLoading = ref(false);
@@ -93,11 +94,12 @@ export function handleDelete(item) {
       sku_card_list.value.splice(i, 1);
       messageInfo("删除成功");
     }
+    getTableData();
   });
 }
 export const bodyLoading = ref(false);
-//排序规格选项
 
+//排序规格选项
 export function sortCard(action, index) {
   let oList = JSON.parse(JSON.stringify(sku_card_list.value));
   // sku_card_list.value是要操作的数组
@@ -118,6 +120,7 @@ export function sortCard(action, index) {
       //成功后再修改原数组的位置，相当于要执行两次   if (action == "up") {     ArrayMoveUp(oList, index);  } else {     ArrauMovedown(oList, index); }
       //为了防止代码冗余用func接收一下action == "up" ? ArrayMoveUp : ArrauMovedown;
       func(sku_card_list.value, index);
+      getTableData();
     })
     .finally(() => {
       bodyLoading.value = false;
@@ -131,7 +134,6 @@ export function handleChooseAndSetGoodsSkuCard(id, data) {
   item.loading = true;
   chooseAndSetGoodsSkuCard(id, data)
     .then((res) => {
-      console.log(res);
       //规格选项对应数据
       item.name = item.text = res.goods_skus_card.name;
       //规格值的对应数据
@@ -139,6 +141,7 @@ export function handleChooseAndSetGoodsSkuCard(id, data) {
         o.text = o.value || "属性值";
         return o;
       });
+      getTableData();
     })
     .finally(() => {
       item.loading = false;
@@ -163,6 +166,7 @@ export function initSkuCardItem(id) {
         if (i != -1) {
           item.goodsSkusCardValue.splice(i, 1);
         }
+        getTableData();
       })
       .finally(() => {
         loading.value = false;
@@ -196,6 +200,7 @@ export function initSkuCardItem(id) {
           ...res,
           text: res.value,
         });
+        getTableData();
       })
       .finally(() => {
         loading.value = false;
@@ -216,6 +221,7 @@ export function initSkuCardItem(id) {
       .then((res) => {
         //修改成功之后将tag的值改为新值
         tag.value = value;
+        getTableData();
       })
       .catch((err) => {
         //失败的话就该回原来的值
@@ -298,4 +304,59 @@ export function initSkuTable() {
     tableThs,
     sku_list,
   };
+}
+
+// sku排列算法
+export function cartesianProductOf() {
+  return Array.prototype.reduce.call(
+    arguments,
+    function (a, b) {
+      var ret = [];
+      a.forEach(function (a) {
+        b.forEach(function (b) {
+          ret.push(a.concat([b]));
+        });
+      });
+      return ret;
+    },
+    [[]]
+  );
+}
+
+//获取规格表格数据
+function getTableData() {
+  setTimeout(() => {
+    if (sku_card_list.value.length === 0) return [];
+    //定一个数组存放规格选项值组合的数组
+    let list = [];
+    sku_card_list.value.forEach((o) => {
+      //如果规格选项值存在且不为0就将其push进list中
+      if (o.goodsSkusCardValue && o.goodsSkusCardValue.length > 0) {
+        list.push(o.goodsSkusCardValue);
+      }
+    });
+    if (list.length == 0) {
+      return [];
+    }
+    console.log(list);
+    //arr就是排列组合之后的数据了
+    let arr = cartesianProductOf(...list);
+    sku_list.value = [];
+    //把整理之后的值赋值给sku_card_list即可
+    sku_list.value = arr.map((o) => {
+      return {
+        code: "",
+        cprice: "0.00",
+        goods_id: goodsId.value,
+        image: "",
+        oprice: "0.00",
+        pprice: "1.00",
+        //o是一个数组
+        skus: o,
+        stock: 0,
+        volume: 0,
+        weight: 0,
+      };
+    });
+  }, 200);
 }
