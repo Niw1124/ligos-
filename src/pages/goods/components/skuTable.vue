@@ -2,6 +2,7 @@
   <el-form-item label="规格设置">
     <table class="border">
       <thead>
+        <!-- 表头的数据 -->
         <tr>
           <th
             class="border"
@@ -14,6 +15,7 @@
             {{ th.name }}
           </th>
         </tr>
+        <!-- 规格选项的数据 -->
         <tr>
           <th class="border" v-for="(th, thi) in skuLabels" :key="thi">
             {{ th.name }}
@@ -21,6 +23,7 @@
         </tr>
       </thead>
       <tbody>
+        <!-- 要渲染的表格数据 -->
         <tr v-for="(item, index) in sku_list" :key="index">
           <td
             width="100"

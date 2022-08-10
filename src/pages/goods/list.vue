@@ -151,7 +151,10 @@
                 class="px-1"
                 size="small"
                 :type="
-                  scope.row.goods_banner.length == 0 ? 'danger' : 'primary'
+                  (scope.row.sku_type == 0 && !scope.row.sku_value) ||
+                  (scope.row.sku_type == 1 && !scope.row.goods_skus.length)
+                    ? 'danger'
+                    : 'primary'
                 "
                 text
                 @click="handleGoodsSkus(scope.row)"

@@ -53,7 +53,7 @@ import FormComponent from "~/components/formComponent.vue";
 import { readGoods, updateGoodsSkus } from "~/api/goods";
 import { messageInfo } from "~/tools/messagePopup";
 import SkuCard from "~/pages/goods/components/SkuCard.vue";
-import { initSkuCardList, goodsId } from "~/tools/useSku.js";
+import { initSkuCardList, goodsId, sku_list } from "~/tools/useSku.js";
 
 //设置弹框显示隐藏
 const formComponentRef = ref(null);
@@ -98,7 +98,14 @@ const loading = ref(false);
 //提交数据的方法
 const submit = () => {
   formComponentRef.value.showLoading();
-  updateGoodsSkus(goodsId.value, form)
+  let data = {
+    sku_type: form.sku_type,
+    sku_value: form.sku_value,
+  };
+  if ((form.sku_type = 1)) {
+    data.goodsSkus = sku_list.value;
+  }
+  updateGoodsSkus(goodsId.value, data)
     .then((res) => {
       messageInfo("设置商品规格成功");
       formComponentRef.value.close();

@@ -17,10 +17,11 @@ export const goodsId = ref(0);
 //规格选项列表
 export const sku_card_list = ref([]);
 
-//表格数据存储
-export const sku_list = ref([]);
-
 //初始化规格选项列表
+//这里的d是查看商品资料接口返回的数据
+
+//表格数据存储在goodsSkus中也就是说sku_list内存的就是要渲染的表格的数据
+export const sku_list = ref([]);
 export function initSkuCardList(d) {
   sku_card_list.value = d.goodsSkusCard.map((item) => {
     //这里定义text是为了防止修改name失败，会回到原来的值，也就是说我们不能直接修改里面的name，如果直接修改name会导致修改不回来，所以我们为了如果提交失败的时候回到原来的值，在这个对象定义一个text和name属性相同的值，之后v-model修改text属性，只有说提交成功后才把name值改了
@@ -246,19 +247,23 @@ export function initSkuCardItem(id) {
 }
 //初始化表格
 export function initSkuTable() {
+  //表头名称
   const skuLabels = computed(() =>
+    //如果新添加的规格他没有规格值的话就没有必要添加到表格中,将合格的数据返回到skuLabels中
     sku_card_list.value.filter((v) => v.goodsSkusCardValue.length > 0)
   );
-  //如果新添加的规格他没有规格值的话就没有必要添加到表格中,将合格的数据返回到skuLabels中
-  //获取表头
+
+  //获取表头的数据
   const tableThs = computed(() => {
+    //获取有多少个规格（skuLabels）的选项
     let length = skuLabels.value.length;
     return [
       {
         name: "商品规格",
+        //列合并，决定于表头skuLabels有多少个规格选项
         colspan: length,
         width: "",
-        //如果有数据就纵向合并一行否则合并两行
+        //如果有数据就纵向合并一行没有skuLabels（还没有添加规格）就合并两行
         rowspan: length > 0 ? 1 : 2,
       },
       {
