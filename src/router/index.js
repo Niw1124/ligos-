@@ -4,7 +4,7 @@ import Login from "~/pages/login/login.vue";
 import NotFound from "~/pages/404.vue";
 import Admin from "~/pages/layouts/admin.vue";
 import GoodsList from "~/pages/goods/list.vue";
-import fenlei from "~/pages/goods/fenlei.vue";
+import Category from "~/pages/category/list.vue";
 import Userlist from "~/pages/user/list.vue";
 import Couponlist from "~/pages/coupon/list.vue";
 import Noticelist from "~/pages/notice/list.vue";
@@ -64,7 +64,7 @@ const asyncRoutes = [
   {
     path: "/category/list",
     name: "/category/list",
-    component: fenlei,
+    component: Category,
     meta: {
       title: "分类列表",
     },
