@@ -22,15 +22,25 @@
       </el-popconfirm>
       <slot></slot>
     </div>
-    <el-tooltip
-      v-if="btns.includes('refresh')"
-      effect="dark"
-      content="刷新数据"
-      placement="top"
-      ><el-button type="text" @click="emit('refresh')"
-        ><el-icon :size="20"><Refresh /></el-icon>
-      </el-button>
-    </el-tooltip>
+    <!-- 图标 -->
+    <div>
+      <el-tooltip
+        v-if="btns.includes('refresh')"
+        content="刷新数据"
+        placement="top"
+        ><el-button size="small" type="text" @click="emit('refresh')"
+          ><el-icon :size="15"><Refresh /></el-icon>
+        </el-button>
+      </el-tooltip>
+      <el-tooltip
+        v-if="btns.includes('download')"
+        content="导出数据"
+        placement="top"
+        ><el-button size="small" type="text" @click="emit('download')"
+          ><el-icon :size="15"><Download /></el-icon>
+        </el-button>
+      </el-tooltip>
+    </div>
   </div>
 </template>
 
@@ -49,7 +59,7 @@ const btns = computed(() =>
     return props.layout.split(",");
   }
 );
-const emit = defineEmits(["increment", "refresh", "delete"]);
+const emit = defineEmits(["increment", "refresh", "delete", "download"]);
 </script>
 
 <style scoped></style>
