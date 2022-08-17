@@ -166,7 +166,7 @@
                 >订单详情</el-button
               >
               <el-button
-                v-if="searchForm.tabbars == 'noship'"
+                v-if="searchForm.tab == 'noship'"
                 class="px-1"
                 type="primary"
                 size="small"
@@ -174,19 +174,21 @@
                 >订单发货</el-button
               >
               <el-button
-                v-if="searchForm.tabbars == 'refunding'"
+                v-if="searchForm.tab == 'refunding'"
                 class="px-1"
                 type="primary"
                 size="small"
                 text
+                @click="handleRefund(scope.row.id, 1)"
                 >同意退款</el-button
               >
               <el-button
-                v-if="searchForm.tabbars == 'refunding'"
+                v-if="searchForm.tab == 'refunding'"
                 class="px-1"
                 type="primary"
                 size="small"
                 text
+                @click="handleRefund(scope.row.id, 0)"
                 >拒绝退款</el-button
               >
             </div>
@@ -210,7 +212,7 @@
 </template>
 
 <script setup>
-import { getOrderList, deleteOrder } from "~/api/order.js";
+import { getOrderList, deleteOrder, refundOrder } from "~/api/order.js";
 import { ref } from "vue";
 import ListHeader from "~/components/ListHeader.vue";
 import Search from "~/components/search.vue";
@@ -218,6 +220,9 @@ import SearchItem from "~/components/SearchItem.vue";
 import { useInitTable } from "~/tools/useCommon.js";
 import ExportExcel from "./ExportExcel.vue";
 import InfoModel from "./InfoModel.vue";
+import { messageConfirmationBox, messageInfo } from "~/tools/messagePopup.js";
+import { popUpInputBox } from "~/tools/useMessageBox.js";
+
 const {
   searchForm,
   resetSearchForm,
@@ -316,6 +321,26 @@ const openInfoModel = (row) => {
   });
   info.value = row;
   InfoModelRef.value.open();
+};
+
+//退款处理
+const disreason = ref("");
+const handleRefund = (id, agree) => {
+  (agree
+    ? messageConfirmationBox("是同意该订单退款？")
+    : popUpInputBox("请输入拒绝的理由")
+  ).then(({ value }) => {
+    //这里的value如果是messageConfirmationBox的话没有值，popUpInputBox的话有返回值即输入的内容
+    let data = { agree };
+    //如果是拒绝退款，添加拒绝理由
+    if (!agree) {
+      data.disagree_reason = value;
+    }
+    refundOrder(id, data).then((res) => {
+      getData();
+      messageInfo("操作成功");
+    });
+  });
 };
 </script>
 

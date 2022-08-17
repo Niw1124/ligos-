@@ -20,7 +20,15 @@
           >{{ info.ship_data.express_company }}
         </el-form-item>
         <el-form-item label="运单号"
-          >{{ info.ship_data.express_no }}
+          >{{ info.ship_data.express_no
+          }}<el-button
+            type="primary"
+            size="small"
+            @click="openShipInfoModel(info.id)"
+            class="ml-3"
+            :loading="loading"
+            >查看物流</el-button
+          >
         </el-form-item>
         <el-form-item label="发货时间"> {{ ship_time }}</el-form-item>
       </el-form>
@@ -71,12 +79,26 @@
         >
       </el-form>
     </el-card>
-  </el-drawer>
+    <el-card shadow="never" v-if="info.refund_status != 'pending'" class="mb-3">
+      <template #header>
+        <b class="text-sm">退款信息</b>
+        <el-button text disabled style="float: right">{{
+          refund_status
+        }}</el-button>
+      </template>
+      <el-form label-width="80px">
+        <el-form-item label="退款理由"
+          >{{ info.extra.refund_reason }}
+        </el-form-item>
+      </el-form>
+    </el-card> </el-drawer
+  ><ShipInfoModel ref="ShipInfoModelRef"></ShipInfoModel>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
 import { useNow, useDateFormat } from "@vueuse/core";
+import ShipInfoModel from "./ShipInfoModel.vue";
 const props = defineProps({
   info: Object,
 });
@@ -98,6 +120,27 @@ const open = () => {
 };
 const close = () => {
   dialogVisible.value = false;
+};
+
+//计算属性
+const refund_status = computed(() => {
+  const opt = {
+    pending: "未退款",
+    applied: "已申请,等待审核",
+    processing: "退款中",
+    success: "退款成功",
+    failed: "退款失败",
+  };
+  return props.info.refund_status ? opt[props.info.refund_status] : "";
+});
+const ShipInfoModelRef = ref(null);
+const loading = ref(false);
+//打开ShipInfoModel的方法
+const openShipInfoModel = (id) => {
+  loading.value = true;
+  ShipInfoModelRef.value.open(id).finally(() => {
+    loading.value = false;
+  });
 };
 
 defineExpose({

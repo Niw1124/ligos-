@@ -1,4 +1,4 @@
-import { ElNotification, ElMessageBox } from "element-plus";
+import { ElMessageBox } from "element-plus";
 
 export function popUpInputBox(tip, value = "") {
   return ElMessageBox.prompt(tip, "", {
