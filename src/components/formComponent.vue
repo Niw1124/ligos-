@@ -80,6 +80,7 @@ defineExpose({
   @apply flex flex-col;
 }
 .body {
+  background: #fff;
   flex: 1;
   position: absolute;
   top: 0;

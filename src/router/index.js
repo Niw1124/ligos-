@@ -17,6 +17,8 @@ import AccessList from "~/pages/access/list.vue";
 import RoleList from "~/pages/role/list.vue";
 import SkusList from "~/pages/skus/list.vue";
 import LevelList from "~/pages/level/list.vue";
+import Buy from "~/pages/setting/buy.vue";
+import Ship from "~/pages/setting/ship.vue";
 //这是默认路由
 const routes = [
   {
@@ -164,6 +166,22 @@ const asyncRoutes = [
     component: LevelList,
     meta: {
       title: "会员等级",
+    },
+  },
+  {
+    path: "/setting/buy",
+    name: "/setting/buy",
+    component: Buy,
+    meta: {
+      title: "支付设置",
+    },
+  },
+  {
+    path: "/setting/ship",
+    name: "/setting/ship",
+    component: Ship,
+    meta: {
+      title: "物流设置",
     },
   },
 ];

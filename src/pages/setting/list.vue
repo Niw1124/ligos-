@@ -25,10 +25,11 @@
           </el-form-item>
           <el-form-item label="强制密码复杂度">
             <el-checkbox-group v-model="form.password_encrypt">
-              <el-checkbox :label="0" border> 数字 </el-checkbox>
-              <el-checkbox :label="1" border> 小写字母 </el-checkbox>
-              <el-checkbox :label="2" border> 大写字母 </el-checkbox>
-              <el-checkbox :label="3" border> 符号 </el-checkbox>
+              <!-- 这里password_encrypt数组内部是字符串组成的，并不是数字所以label前不加冒号 -->
+              <el-checkbox label="0" border> 数字 </el-checkbox>
+              <el-checkbox label="1" border> 小写字母 </el-checkbox>
+              <el-checkbox label="2" border> 大写字母 </el-checkbox>
+              <el-checkbox label="3" border> 符号 </el-checkbox>
             </el-checkbox-group>
           </el-form-item>
         </el-tab-pane>
@@ -75,7 +76,9 @@
             <el-radio-group v-model="form.api_safe">
               <el-radio :label="1" border> 是 </el-radio>
               <el-radio :label="0" border> 否</el-radio> </el-radio-group
-            ><small>api安全功能开启之后调用前端qpi需要传输签名串</small>
+            ><small class="text-gray-500 flex mt-1 ml-1"
+              >api安全功能开启之后调用前端qpi需要传输签名串</small
+            >
           </el-form-item>
           <el-form-item label="秘钥">
             <el-input
@@ -83,14 +86,16 @@
               placeholder="秘钥"
               style="width: 30%"
             ></el-input
-            ><small class="text-gray-500 flex mt-1"
+            ><small class="text-gray-500 flex mt-1 ml-1"
               >秘钥设置关系系统中api调用传输签名串的编码规则以及会员token解析，请慎重设置，注意设置之后对应会员要求重新登录获取token</small
             >
           </el-form-item>
         </el-tab-pane>
       </el-tabs>
       <el-form-item>
-        <el-button type="primary" size="default" @click="">保存</el-button>
+        <el-button type="primary" size="default" @click="submit"
+          >保存</el-button
+        >
       </el-form-item>
     </el-form>
   </div>
@@ -99,6 +104,7 @@
 <script setup>
 import { getSysconfig, setSysconfig } from "~/api/sysconfig.js";
 import { ref, reactive } from "vue";
+import { messageInfo } from "../../tools/messagePopup";
 //定义标签切换的标签头部默认打开第一个
 const activeName = ref("first");
 
@@ -123,13 +129,33 @@ function getData() {
   loading.value = true;
   getSysconfig()
     .then((res) => {
-      console.log(res);
+      for (const k in form) {
+        //将res中form有的k值赋值给form
+        form[k] = res[k];
+      }
+      //密码复杂度是一个字符串，后端返回的是一个字符串而渲染时采用数组，所以用split改成数组
+      form.password_encrypt = form.password_encrypt.split(",");
     })
     .finally(() => {
       loading.value = false;
     });
 }
 getData();
+const submit = () => {
+  loading.value = true;
+  //展开form修改 password_encrypt的数据格式
+  setSysconfig({
+    ...form,
+    password_encrypt: form.password_encrypt.join(","),
+  })
+    .then((res) => {
+      messageInfo("保存设置成功");
+      getData();
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+};
 </script>
 
 <style lang="scss" scoped></style>
