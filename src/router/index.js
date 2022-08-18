@@ -19,6 +19,7 @@ import SkusList from "~/pages/skus/list.vue";
 import LevelList from "~/pages/level/list.vue";
 import Buy from "~/pages/setting/buy.vue";
 import Ship from "~/pages/setting/ship.vue";
+import DistributionIndex from "~/pages/distribution/index.vue";
 //这是默认路由
 const routes = [
   {
@@ -182,6 +183,14 @@ const asyncRoutes = [
     component: Ship,
     meta: {
       title: "物流设置",
+    },
+  },
+  {
+    path: "/distribution/index",
+    name: "/distribution/index",
+    component: DistributionIndex,
+    meta: {
+      title: "分销员管理",
     },
   },
 ];
