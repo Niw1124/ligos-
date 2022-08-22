@@ -9,4 +9,5 @@ export function deleteImage(ids) {
 export function changeImageName(id, name) {
   return axios.post(`/admin/image/${id}`, { name });
 }
-export const uploadImageAction = "/api/admin/image/upload";
+export const uploadImageAction =
+  import.meta.env.VITE_APP_BASE_API + "/admin/image/upload";

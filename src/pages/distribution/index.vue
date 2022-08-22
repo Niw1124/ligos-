@@ -2,7 +2,6 @@
   <div>
     <Pannel></Pannel>
     <el-card shadow="never" class="border-0">
-      <!-- 搜索 -->
       <search :model="searchForm" @search="getData" @reset="resetSearchForm">
         <search-item label="时间选择">
           <el-radio-group v-model="searchForm.type" bo>
@@ -90,8 +89,20 @@
         <el-table-column label="操作" width="180" align="center" fixed="right">
           <template #default="scope">
             <div>
-              <el-button type="primary" size="small" text>推广人</el-button>
-              <el-button type="primary" size="small" text>推广订单</el-button>
+              <el-button
+                type="primary"
+                size="small"
+                text
+                @click="openDrawer(scope.row.id, 'user')"
+                >推广人</el-button
+              >
+              <el-button
+                type="primary"
+                size="small"
+                text
+                @click="openDrawer(scope.row.id, 'order')"
+                >推广订单</el-button
+              >
             </div>
           </template>
         </el-table-column>
@@ -107,6 +118,8 @@
         />
       </div>
     </el-card>
+    <dataDrawer ref="dataDrawerRef"></dataDrawer>
+    <dataDrawer ref="orderDrawerRef" type="order"></dataDrawer>
   </div>
 </template>
 
@@ -114,6 +127,7 @@
 import Pannel from "./pannel.vue";
 import { getAgentList } from "~/api/distribution.js";
 import { ref } from "vue";
+import dataDrawer from "./dataDrawer.vue";
 import Search from "~/components/search.vue";
 import SearchItem from "~/components/SearchItem.vue";
 import { useInitTable } from "~/tools/useCommon.js";
@@ -142,6 +156,12 @@ const {
     total.value = res.totalCount;
   },
 });
+
+const dataDrawerRef = ref(null);
+const orderDrawerRef = ref(null);
+const openDrawer = (id, type) => {
+  (type == "user" ? dataDrawerRef : orderDrawerRef).value.open(id);
+};
 </script>
 
 <style lang="scss" scoped></style>

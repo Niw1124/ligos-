@@ -4,8 +4,7 @@ import { getToken } from "~/tools/cookieFunction";
 import store from "~/store/index";
 
 const service = axios.create({
-  baseURL: "/api",
-  timeout: 1000,
+  baseURL: import.meta.env.VITE_APP_BASE_API,
 });
 
 // 添加请求拦截器

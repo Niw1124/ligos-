@@ -6,7 +6,7 @@
 </template>
 
 <script>
-export default {};
+console.log(import.meta.env);
 </script>
 
 <style>
